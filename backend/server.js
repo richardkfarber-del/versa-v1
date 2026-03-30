@@ -328,6 +328,13 @@ app.post('/api/webhook', bodyParser.raw({ type: 'application/json' }), (req, res
     res.json({ received: true });
 });
 
+// Serve the static frontend files
+app.use(express.static(require('path').join(__dirname, '../frontend')));
+
+// Route the root URL to the UI
+app.get('/', (req, res) => {
+  res.sendFile(require('path').join(__dirname, '../frontend/payment_ui.html'));
+});
 app.listen(PORT, () => {
     console.log(`Backend server listening on port ${PORT}`);
 });
