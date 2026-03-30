@@ -6,7 +6,7 @@ const app = express();
 const bodyParser = require('body-parser');
 const cors = require('cors'); // Required for cross-origin requests
 const rateLimit = require('express-rate-limit'); // For rate limiting
-const { body, param, validationResult } = require('express-validator'); // For input validation
+const { body: checkBody, param, validationResult } = require('express-validator'); // For input validation
 
 // Ensure Stripe Secret Key is loaded securely
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
@@ -104,7 +104,7 @@ const validateInput = (req, res, next) => {
 app.post('/api/create-payment-intent', 
     authenticateUser,
     [
-        body('amount').isNumeric().withMessage('Amount must be a number.').toInt(),
+        checkBody('amount').isNumeric().withMessage('Amount must be a number.').toInt(),
         body('currency').isString().trim().notEmpty().withMessage('Currency is required.'),
         body('paymentMethodType').isString().trim().notEmpty().withMessage('Payment method type is required.'),
         // customerId is optional, so no direct validation needed unless it must conform to a format if present
