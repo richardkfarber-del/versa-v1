@@ -28,6 +28,50 @@ if (!stripeWebhookSecret) {
     console.warn('WARNING: STRIPE_WEBHOOK_SECRET is not set. Webhook verification will fail if not provided.');
 }
 
+// Database Connection Logic (Placeholder for graceful degradation)
+try {
+    const databaseUrl = process.env.DATABASE_URL;
+    if (databaseUrl) {
+        // Simulate database connection attempt
+        // In a real app, this would be actual DB client connection (e.g., mongoose.connect, pg.Pool)
+        console.log(`Attempting to connect to database at: ${databaseUrl}`);
+        // For demonstration, we'll assume a successful connection if the URL exists
+        // In a real scenario, you'd await an actual connection method here
+        // If it fails, the catch block will execute
+        if (databaseUrl.includes('localhost') && process.env.NODE_ENV === 'production') {
+            throw new Error('Database URL points to localhost in production environment.');
+        }
+        console.log('Database connection attempt successful (placeholder).');
+    } else {
+        console.warn('WARNING: DATABASE_URL is not set. Database operations may fail.');
+    }
+} catch (error) {
+    console.warn(`WARNING: Database connection failed: ${error.message}. The application will continue to run without database connectivity.`);
+    // The application continues to run
+}
+
+// Redis Connection Logic (Placeholder for graceful degradation)
+try {
+    const redisUrl = process.env.REDIS_URL;
+    if (redisUrl) {
+        // Simulate Redis connection attempt
+        // In a real app, this would be actual Redis client connection (e.g., new Redis(redisUrl))
+        console.log(`Attempting to connect to Redis at: ${redisUrl}`);
+        // For demonstration, we'll assume a successful connection if the URL exists
+        // In a real scenario, you'd await an actual connection method here
+        // If it fails, the catch block will execute
+        if (redisUrl.includes('localhost') && process.env.NODE_ENV === 'production') {
+            throw new Error('Redis URL points to localhost in production environment.');
+        }
+        console.log('Redis connection attempt successful (placeholder).');
+    } else {
+        console.warn('WARNING: REDIS_URL is not set. Caching and session management may be affected.');
+    }
+} catch (error) {
+    console.warn(`WARNING: Redis connection failed: ${error.message}. The application will continue to run without Redis connectivity.`);
+    // The application continues to run
+}
+
 // CORS Configuration: Restrict to trusted origins in production
 // For development, allowing all origins is common.
 // In production, replace '*' with your frontend's URL (e.g., 'https://yourdomain.com')
