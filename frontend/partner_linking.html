@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Versa - Partner Linking</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="theme.css">
+    <link rel="stylesheet" href="partner_linking.css">
+</head>
+<body>
+    <div class="container partner-linking-container">
+        <img src="company_logo.png" alt="Versa Logo" style="max-width: 140px; display: block; margin: 0 auto 40px auto;">
+        <h2>Link with Your Partner</h2>
+        <p class="subtitle">Generate an invite code or enter your partner's to connect securely.</p>
+
+        <div class="form-group">
+            <label for="invite-code-display">Your Invite Code</label>
+            <input type="text" id="invite-code-display" value="" readonly placeholder="Click 'Generate Code'"/>
+            <button class="primary-button" onclick="generateAndDisplayCode()">Generate Code</button>
+            <button class="secondary-button" onclick="copyInviteCode()" style="margin-top: 10px;">Copy Code</button>
+        </div>
+
+        <div class="form-group" style="margin-top: 40px;">
+            <label for="partner-invite-code">Enter Partner's Invite Code</label>
+            <input type="text" id="partner-invite-code" placeholder="e.g., ABC-123-XYZ" />
+            <button class="primary-button" onclick="linkPartnerAccount()">Link Account</button>
+        </div>
+        
+        <a href="dashboard.html" class="footer-link">Return to Dashboard</a>
+    </div>
+    <script src="partner_linking.js"></script>
+</body>
+</html>

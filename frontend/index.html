@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Versa Password Reset</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-midnight: #0e0e0e;
+            --primary-plum: #f183ff;
+            --secondary-saffron: #ff9800;
+            --font-headline: 'Manrope', sans-serif;
+            --font-body: 'Plus Jakarta Sans', sans-serif;
+            --surface-glass: rgba(255, 255, 255, 0.2);
+            --surface-focus: rgba(255, 255, 255, 0.3);
+            --spacing-form: 2.75rem;
+            --radius-button: 1.5rem;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-midnight);
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-image: radial-gradient(circle at top left, rgba(241, 131, 255, 0.15), transparent 50%),
+                              radial-gradient(circle at bottom right, rgba(255, 152, 0, 0.1), transparent 50%);
+        }
+        .container {
+            background: var(--surface-glass);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            padding: 40px;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+        }
+        h2 {
+            font-family: var(--font-headline);
+            color: #ffffff;
+            margin-bottom: 24px;
+            font-weight: 600;
+        }
+        .form-group {
+            margin-bottom: var(--spacing-form);
+            text-align: left;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: rgba(255, 255, 255, 0.85);
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 14px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            color: #ffffff;
+            box-sizing: border-box;
+            font-size: 16px;
+            font-family: var(--font-body);
+            transition: all 0.3s ease;
+        }
+        input[type="email"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            background: var(--surface-focus);
+            border-color: var(--primary-plum);
+            box-shadow: 0 0 0 2px rgba(241, 131, 255, 0.25);
+        }
+        small {
+            display: block;
+            margin-top: 8px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.8rem;
+            line-height: 1.4;
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--primary-plum);
+            color: var(--bg-midnight);
+            border: none;
+            border-radius: var(--radius-button);
+            font-size: 16px;
+            font-weight: 700;
+            font-family: var(--font-headline);
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        button:hover {
+            background-color: #f6a1ff;
+            transform: translateY(-1px);
+        }
+        .message {
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 14px;
+            display: none;
+        }
+        .message.success {
+            background-color: rgba(40, 167, 69, 0.2);
+            color: #a8f0b3;
+            border: 1px solid rgba(40, 167, 69, 0.3);
+        }
+        .message.error {
+            background-color: rgba(220, 53, 69, 0.2);
+            color: #ffb3b3;
+            border: 1px solid rgba(220, 53, 69, 0.3);
+        }
+        .loading {
+            display: none;
+            margin-top: 15px;
+            font-size: 14px;
+            color: var(--primary-plum);
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="company_logo.png" alt="Versa Logo" style="max-width: 160px; display: block; margin: 0 auto 30px;">
+        <div id="forgot-password-section">
+            <h2>Forgot Your Password?</h2>
+            <form id="forgot-password-form">
+                <div class="form-group">
+                    <label for="email">Enter your registered email:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <button type="submit">Send Reset Link</button>
+            </form>
+            <div id="forgot-password-message" class="message"></div>
+            <div id="forgot-password-loading" class="loading">Sending email...</div>
+        </div>
+
+        <div id="reset-password-section" style="display: none;">
+            <h2>Reset Your Password</h2>
+            <form id="reset-password-form">
+                <div class="form-group">
+                    <label for="new-password">New Password:</label>
+                    <input type="password" id="new-password" name="new-password" required>
+                    <small>Password must be at least 8 characters long, include an uppercase letter, a lowercase letter, a number, and a special character.</small>
+                </div>
+                <div class="form-group">
+                    <label for="confirm-password">Confirm New Password:</label>
+                    <input type="password" id="confirm-password" name="confirm-password" required>
+                </div>
+                <button type="submit">Reset Password</button>
+            </form>
+            <div id="reset-password-message" class="message"></div>
+            <div id="reset-password-loading" class="loading">Resetting password...</div>
+        </div>
+    </div>
+
+    <script>
+        const forgotPasswordSection = document.getElementById('forgot-password-section');
+        const resetPasswordSection = document.getElementById('reset-password-section');
+        const forgotPasswordForm = document.getElementById('forgot-password-form');
+        const resetPasswordForm = document.getElementById('reset-password-form');
+        const forgotPasswordMessage = document.getElementById('forgot-password-message');
+        const resetPasswordMessage = document.getElementById('reset-password-message');
+        const forgotPasswordLoading = document.getElementById('forgot-password-loading');
+        const resetPasswordLoading = document.getElementById('reset-password-loading');
+
+        function showMessage(element, type, text) {
+            element.className = `message ${type}`;
+            element.textContent = text;
+            element.style.display = 'block';
+        }
+
+        function hideMessage(element) {
+            element.style.display = 'none';
+        }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+
+        if (token) {
+            forgotPasswordSection.style.display = 'none';
+            resetPasswordSection.style.display = 'block';
+            validateResetToken(token);
+        } else {
+            forgotPasswordSection.style.display = 'block';
+            resetPasswordSection.style.display = 'none';
+        }
+
+        forgotPasswordForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            hideMessage(forgotPasswordMessage);
+            forgotPasswordLoading.style.display = 'block';
+            const email = document.getElementById('email').value;
+            try {
+                const response = await fetch('/api/forgot-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email }),
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    showMessage(forgotPasswordMessage, 'success', data.message);
+                    forgotPasswordForm.reset();
+                } else {
+                    showMessage(forgotPasswordMessage, 'error', data.error || 'An error occurred.');
+                }
+            } catch (error) {
+                console.error('Network error:', error);
+                showMessage(forgotPasswordMessage, 'error', 'Could not connect to the server. Please try again.');
+            } finally {
+                forgotPasswordLoading.style.display = 'none';
+            }
+        });
+
+        async function validateResetToken(token) {
+            hideMessage(resetPasswordMessage);
+            resetPasswordLoading.style.display = 'block';
+            try {
+                const response = await fetch('/api/reset-password-validate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token }),
+                });
+                const data = await response.json();
+                if (!response.ok) {
+                    showMessage(resetPasswordMessage, 'error', data.error || 'Invalid or expired password reset link. Please request a new one.');
+                    resetPasswordForm.style.display = 'none';
+                } else {
+                    resetPasswordForm.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Network error:', error);
+                showMessage(resetPasswordMessage, 'error', 'Could not validate reset link. Please try again.');
+                resetPasswordForm.style.display = 'none';
+            } finally {
+                resetPasswordLoading.style.display = 'none';
+            }
+        }
+
+        resetPasswordForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            hideMessage(resetPasswordMessage);
+            resetPasswordLoading.style.display = 'block';
+            const newPassword = document.getElementById('new-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            if (newPassword !== confirmPassword) {
+                showMessage(resetPasswordMessage, 'error', 'Passwords do not match.');
+                resetPasswordLoading.style.display = 'none';
+                return;
+            }
+            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+={}\[\]|\\:;"'<>,.?/~`])[A-Za-z\d!@#$%^&*()_+={}\[\]|\\:;"'<>,.?/~`]{8,}$/;
+            if (!passwordRegex.test(newPassword)) {
+                showMessage(resetPasswordMessage, 'error', 'Password must be at least 8 characters long, include an uppercase letter, a lowercase letter, a number, and a special character.');
+                resetPasswordLoading.style.display = 'none';
+                return;
+            }
+            try {
+                const response = await fetch('/api/reset-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token, newPassword }),
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    showMessage(resetPasswordMessage, 'success', data.message + ' Redirecting to login...');
+                    resetPasswordForm.reset();
+                    setTimeout(() => { window.location.href = '/login'; }, 3000);
+                } else {
+                    showMessage(resetPasswordMessage, 'error', data.error || 'An error occurred during password reset.');
+                }
+            } catch (error) {
+                console.error('Network error:', error);
+                showMessage(resetPasswordMessage, 'error', 'Could not connect to the server. Please try again.');
+            } finally {
+                resetPasswordLoading.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
