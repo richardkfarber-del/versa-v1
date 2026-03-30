@@ -149,8 +149,8 @@ app.post('/api/create-payment-intent',
     authenticateUser,
     [
         checkBody('amount').isNumeric().withMessage('Amount must be a number.').toInt(),
-        body('currency').isString().trim().notEmpty().withMessage('Currency is required.'),
-        body('paymentMethodType').isString().trim().notEmpty().withMessage('Payment method type is required.'),
+        checkBody('currency').isString().trim().notEmpty().withMessage('Currency is required.'),
+        checkBody('paymentMethodType').isString().trim().notEmpty().withMessage('Payment method type is required.'),
         // customerId is optional, so no direct validation needed unless it must conform to a format if present
     ],
     validateInput,
@@ -175,7 +175,7 @@ app.post('/api/create-payment-intent',
 app.post('/api/create-customer', 
     authenticateUser,
     [
-        body('email').isEmail().withMessage('Valid email is required.'),
+        checkBody('email').isEmail().withMessage('Valid email is required.'),
     ],
     validateInput,
     async (req, res) => {
@@ -196,8 +196,8 @@ app.post('/api/create-customer',
 app.post('/api/create-subscription', 
     authenticateUser,
     [
-        body('customerId').isString().trim().notEmpty().withMessage('Customer ID is required.'),
-        body('priceId').isString().trim().notEmpty().withMessage('Price ID is required.'),
+        checkBody('customerId').isString().trim().notEmpty().withMessage('Customer ID is required.'),
+        checkBody('priceId').isString().trim().notEmpty().withMessage('Price ID is required.'),
     ],
     validateInput,
     async (req, res) => {
@@ -242,7 +242,7 @@ app.get('/api/retrieve-subscription/:subscriptionId',
 app.post('/api/cancel-subscription', 
     authenticateUser,
     [
-        body('subscriptionId').isString().trim().notEmpty().withMessage('Subscription ID is required.'),
+        checkBody('subscriptionId').isString().trim().notEmpty().withMessage('Subscription ID is required.'),
     ],
     validateInput,
     async (req, res) => {
