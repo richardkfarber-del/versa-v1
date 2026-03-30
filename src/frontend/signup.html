@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Versa | Create Your Sanctuary</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "background": "#0e0e0e",
+              "on-tertiary": "#006727",
+              "tertiary-fixed-dim": "#4bee74",
+              "surface-tint": "#f183ff",
+              "on-surface-variant": "#adaaaa",
+              "on-secondary-container": "#fff6f1",
+              "on-error-container": "#ffb2b9",
+              "primary-fixed-dim": "#db65ec",
+              "on-error": "#490013",
+              "tertiary": "#b8ffbb",
+              "surface-variant": "#262626",
+              "tertiary-container": "#5cfd80",
+              "surface-container-lowest": "#000000",
+              "on-background": "#ffffff",
+              "secondary-container": "#8b5000",
+              "on-tertiary-fixed": "#004819",
+              "inverse-primary": "#9b26af",
+              "secondary-dim": "#ec8c00",
+              "error": "#ff6e84",
+              "surface": "#0e0e0e",
+              "primary-container": "#e770f8",
+              "tertiary-dim": "#4bee74",
+              "primary": "#f183ff",
+              "on-secondary-fixed-variant": "#774400",
+              "inverse-on-surface": "#565555",
+              "primary-dim": "#e46df5",
+              "secondary": "#ff9800",
+              "on-surface": "#ffffff",
+              "on-primary-container": "#41004c",
+              "surface-container-low": "#131313",
+              "secondary-fixed-dim": "#ffb467",
+              "secondary-fixed": "#ffc791",
+              "on-secondary": "#4a2800",
+              "inverse-surface": "#fcf9f8",
+              "on-tertiary-container": "#005d22",
+              "primary-fixed": "#ea73fb",
+              "surface-bright": "#2c2c2c",
+              "on-secondary-fixed": "#4f2c00",
+              "surface-dim": "#0e0e0e",
+              "error-dim": "#d73357",
+              "surface-container": "#1a1919",
+              "outline": "#767575",
+              "surface-container-highest": "#262626",
+              "on-primary-fixed-variant": "#540062",
+              "surface-container-high": "#201f1f",
+              "on-tertiary-fixed-variant": "#006827",
+              "error-container": "#a70138",
+              "outline-variant": "#484847",
+              "on-primary-fixed": "#010002",
+              "on-primary": "#540062",
+              "tertiary-fixed": "#5cfd80"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Plus Jakarta Sans"],
+              "label": ["Plus Jakarta Sans"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "1.5rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .glow-text {
+            text-shadow: 0 0 20px rgba(241, 131, 255, 0.3);
+        }
+        .bg-mesh {
+            background: radial-gradient(circle at 20% 30%, rgba(241, 131, 255, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 70%, rgba(255, 152, 0, 0.08) 0%, transparent 50%);
+        }
+        .input-error {
+            border: 1px solid #ff6e84 !important;
+            background-color: rgba(167, 1, 56, 0.05) !important;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body selection:bg-primary/30 selection:text-primary min-h-screen flex flex-col relative overflow-hidden">
+    <!-- Abstract Background Elements -->
+    <div class="absolute inset-0 z-0 bg-mesh pointer-events-none"></div>
+    <div class="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] bg-primary/5 blur-[120px] rounded-full"></div>
+    <div class="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] bg-secondary/5 blur-[100px] rounded-full"></div>
+
+    <!-- Main Content Canvas -->
+    <main class="relative z-10 flex-grow flex items-center justify-center p-6">
+        <div class="w-full max-w-[480px]">
+            <!-- Branding Header -->
+            <div class="text-center mb-10">
+                <img alt="Versa Logo" class="h-24 mx-auto mb-6 drop-shadow-[0_0_25px_rgba(241,131,255,0.4)] transition-all duration-500 hover:scale-105" src="company_logo.png"/>
+            </div>
+
+            <!-- Registration Card (Glassmorphism) -->
+            <div class="bg-surface-container-low/80 backdrop-blur-2xl rounded-[2.75rem] p-10 md:p-12 shadow-2xl border border-outline-variant/10">
+                <div class="mb-10 text-center">
+                    <h1 class="font-headline text-3xl md:text-4xl font-extrabold tracking-tight text-on-background mb-3 glow-text">
+                        Create Your Sanctuary
+                    </h1>
+                    <p class="text-on-surface-variant font-medium tracking-wide">
+                        Begin your journey to radiant well-being.
+                    </p>
+                </div>
+
+                <form id="signupForm" class="space-y-[2.75rem]">
+                    <!-- Error Summary -->
+                    <div id="errorSummary" class="hidden bg-error-container/20 border border-error/30 p-4 rounded-xl flex items-center gap-3">
+                        <span class="material-symbols-outlined text-error">report</span>
+                        <p id="errorText" class="text-error text-sm font-semibold"></p>
+                    </div>
+
+                    <!-- Email Field -->
+                    <div class="space-y-2">
+                        <label class="block text-xs font-bold uppercase tracking-widest text-outline pl-1" for="email">Email Address</label>
+                        <div class="relative group">
+                            <input class="w-full bg-surface-container-lowest border-none rounded-xl py-4 px-5 text-on-surface placeholder:text-outline/50 focus:bg-surface-container-high focus:ring-2 focus:ring-primary/40 transition-all duration-300" id="email" placeholder="name@sanctuary.com" type="email" required/>
+                            <span class="absolute right-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline/30 group-focus-within:text-primary transition-colors">mail</span>
+                        </div>
+                    </div>
+
+                    <!-- Password Field -->
+                    <div class="space-y-2">
+                        <label class="block text-xs font-bold uppercase tracking-widest text-outline pl-1" for="password">Password</label>
+                        <div class="relative group">
+                            <input class="w-full bg-surface-container-lowest border-none rounded-xl py-4 px-5 text-on-surface placeholder:text-outline/50 focus:bg-surface-container-high focus:ring-2 focus:ring-primary/40 transition-all duration-300" id="password" placeholder="••••••••" type="password" required/>
+                            <span class="absolute right-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline/30 group-focus-within:text-primary transition-colors">lock</span>
+                        </div>
+                    </div>
+
+                    <!-- Confirm Password Field -->
+                    <div class="space-y-2">
+                        <label class="block text-xs font-bold uppercase tracking-widest text-outline pl-1" for="confirm-password">Confirm Password</label>
+                        <div class="relative group">
+                            <input class="w-full bg-surface-container-lowest border-none rounded-xl py-4 px-5 text-on-surface placeholder:text-outline/50 focus:bg-surface-container-high focus:ring-2 focus:ring-primary/40 transition-all duration-300" id="confirm-password" placeholder="••••••••" type="password" required/>
+                            <span class="absolute right-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline/30 group-focus-within:text-primary transition-colors">verified_user</span>
+                        </div>
+                    </div>
+
+                    <!-- CTA Button -->
+                    <div class="pt-4">
+                        <button class="w-full bg-gradient-to-r from-secondary to-secondary-dim hover:to-primary text-on-secondary font-bold py-5 rounded-xl text-lg shadow-lg shadow-secondary/20 hover:shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2" type="submit">
+                            <span>Sign Up</span>
+                            <span class="material-symbols-outlined">arrow_forward</span>
+                        </button>
+                    </div>
+
+                    <!-- Security Message -->
+                    <div class="flex items-center justify-center gap-2 pt-2">
+                        <span class="material-symbols-outlined text-tertiary-dim text-sm">encrypted</span>
+                        <p class="text-xs text-on-tertiary-fixed-variant font-medium">Your connection is encrypted and safe.</p>
+                    </div>
+                </form>
+
+                <!-- Redirect to Login -->
+                <div class="mt-8 pt-8 border-t border-outline-variant/10 text-center">
+                    <p class="text-on-surface-variant text-sm">
+                        Already have an account? 
+                        <a class="text-primary font-bold hover:text-primary-fixed ml-1 transition-colors" href="login.html">Sign In</a>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Secondary Footer Navigation -->
+            <nav class="mt-12 flex justify-center gap-8">
+                <a class="text-outline text-xs font-semibold hover:text-on-surface transition-colors tracking-widest uppercase" href="#">Privacy Policy</a>
+                <a class="text-outline text-xs font-semibold hover:text-on-surface transition-colors tracking-widest uppercase" href="#">Terms</a>
+                <a class="text-outline text-xs font-semibold hover:text-on-surface transition-colors tracking-widest uppercase" href="#">Support</a>
+            </nav>
+        </div>
+    </main>
+
+    <!-- Global Footer -->
+    <footer class="w-full py-12 border-t border-outline-variant/20 z-10 bg-background">
+        <div class="flex flex-col md:flex-row justify-between items-center px-12 max-w-7xl mx-auto gap-6">
+            <div class="text-lg font-bold text-inverse-surface font-headline tracking-tighter">Versa</div>
+            <p class="font-body text-sm tracking-wide text-outline text-center md:text-left">
+                © 2024 Versa. All rights reserved. Your Radiant Sanctuary.
+            </p>
+            <div class="flex gap-6">
+                <span class="material-symbols-outlined text-outline cursor-pointer hover:text-tertiary transition-colors">share</span>
+                <span class="material-symbols-outlined text-outline cursor-pointer hover:text-tertiary transition-colors">language</span>
+                <span class="material-symbols-outlined text-outline cursor-pointer hover:text-tertiary transition-colors">eco</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const signupForm = document.getElementById('signupForm');
+        const errorSummary = document.getElementById('errorSummary');
+        const errorText = document.getElementById('errorText');
+
+        signupForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            errorSummary.classList.add('hidden');
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+
+            // Password strength requirements: 
+            // minimum 8 characters, at least one uppercase, one lowercase, one number, and one special character
+            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+            if (password !== confirmPassword) {
+                showError("Passwords do not match.");
+                return;
+            }
+
+            if (!passwordRegex.test(password)) {
+                showError("Password must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character.");
+                return;
+            }
+
+            // Simulate successful registration
+            console.log('Registration successful:', email);
+            alert('Account created successfully! Redirecting to login...');
+            window.location.href = 'login.html';
+        });
+
+        function showError(msg) {
+            errorText.textContent = msg;
+            errorSummary.classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
