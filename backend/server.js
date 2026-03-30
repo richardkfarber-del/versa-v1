@@ -8,6 +8,8 @@ const cors = require('cors'); // Required for cross-origin requests
 const rateLimit = require('express-rate-limit'); // For rate limiting
 const { body: checkBody, param, validationResult } = require('express-validator'); // For input validation
 
+const PORT = process.env.PORT || 10000;
+
 // Ensure Stripe Secret Key is loaded securely
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
 if (!stripeSecretKey) {
