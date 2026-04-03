@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Versa - Match Reveal</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "tertiary-fixed": "#5cfd80",
+                        "surface-variant": "#262626",
+                        "on-error": "#490013",
+                        "on-secondary-fixed-variant": "#774400",
+                        "on-error-container": "#ffb2b9",
+                        "error-dim": "#d73357",
+                        "on-secondary-fixed": "#4f2c00",
+                        "surface-container-low": "#131313",
+                        "surface-tint": "#f183ff",
+                        "tertiary-fixed-dim": "#4bee74",
+                        "on-tertiary-fixed": "#004819",
+                        "inverse-on-surface": "#565555",
+                        "on-tertiary-fixed-variant": "#006827",
+                        "secondary-container": "#8b5000",
+                        "primary-container": "#e770f8",
+                        "primary": "#f183ff",
+                        "surface-container-highest": "#262626",
+                        "secondary-dim": "#ec8c00",
+                        "on-surface": "#ffffff",
+                        "outline": "#767575",
+                        "outline-variant": "#484847",
+                        "inverse-primary": "#9b26af",
+                        "inverse-surface": "#fcf9f8",
+                        "surface-container": "#1a1919",
+                        "surface-container-high": "#201f1f",
+                        "surface": "#0e0e0e",
+                        "tertiary-container": "#5cfd80",
+                        "tertiary": "#b8ffbb",
+                        "on-background": "#ffffff",
+                        "on-tertiary": "#006727",
+                        "primary-dim": "#e46df5",
+                        "surface-dim": "#0e0e0e",
+                        "secondary": "#ff9800",
+                        "surface-container-lowest": "#000000",
+                        "on-secondary": "#4a2800",
+                        "secondary-fixed": "#ffc791",
+                        "primary-fixed-dim": "#db65ec",
+                        "on-secondary-container": "#fff6f1",
+                        "secondary-fixed-dim": "#ffb467",
+                        "on-tertiary-container": "#005d22",
+                        "on-primary": "#540062",
+                        "error-container": "#a70138",
+                        "on-primary-container": "#41004c",
+                        "primary-fixed": "#ea73fb",
+                        "error": "#ff6e84",
+                        "surface-bright": "#2c2c2c",
+                        "tertiary-dim": "#4bee74",
+                        "on-surface-variant": "#adaaaa",
+                        "background": "#0e0e0e",
+                        "on-primary-fixed-variant": "#540062",
+                        "on-primary-fixed": "#010002"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Plus Jakarta Sans"],
+                        "label": ["Plus Jakarta Sans"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "3xl": "1.5rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(26, 25, 25, 0.6);
+            backdrop-filter: blur(12px);
+        }
+        .glow-secondary {
+            box-shadow: 0 0 20px rgba(255, 152, 0, 0.3);
+        }
+        .asymmetric-shape-1 {
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, #f183ff 0%, transparent 70%);
+            filter: blur(60px);
+            opacity: 0.15;
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            z-index: -1;
+        }
+        .asymmetric-shape-2 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, #ff9800 0%, transparent 70%);
+            filter: blur(80px);
+            opacity: 0.1;
+            position: absolute;
+            bottom: 50px;
+            left: -100px;
+            z-index: -1;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface font-body min-h-screen selection:bg-primary selection:text-on-primary">
+<!-- Top Navigation Anchor (As per Shell Visibility Rule: Sub-page, no bottom nav, but maintains brand identity) -->
+<header class="flex justify-between items-center w-full px-6 py-6 fixed top-0 z-50 bg-transparent backdrop-blur-xl bg-opacity-80">
+<div class="flex items-center gap-3">
+<img alt="Versa App Logo" class="w-10 h-10" data-alt="abstract geometric shape logo with organic overlapping curves in magenta and saffron orange on a dark background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrvmj9fE8wymT5lgT3LS-1I4tErKwpKlcZZuBgCtk4uUqeqJUROyAn248BClzDQ4WiWQNsUuKA0ARQj5N1rlYYBIBTJFlbVQOgKk7ssUajQdcgft3WfNInH_cstvFo8Z1t736NVFdm33kSYq3d8aCaFb2HpGR8Y4DSf5Xfjcxjom-cP04c0gupbVoRMpRPIwQGKcVlElt1TdH9ZrHLHnB0hWT7XO4qntCiX9borKuvuxlTIfWS03Qee_G58IWo0ZPhlTmh7FsypTg"/>
+<span class="text-2xl font-bold tracking-tighter font-headline text-slate-100">Versa</span>
+</div>
+<button class="w-10 h-10 rounded-full flex items-center justify-center bg-surface-container-high text-on-surface hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined">close</span>
+</button>
+</header>
+<main class="relative pt-24 pb-32 px-6 max-w-2xl mx-auto min-h-screen overflow-hidden">
+<!-- Ambient Visual Layers -->
+<div class="asymmetric-shape-1"></div>
+<div class="asymmetric-shape-2"></div>
+<!-- Hero Section -->
+<section class="mb-12">
+<div class="relative w-full aspect-square mb-10 overflow-hidden rounded-3xl">
+<img class="w-full h-full object-cover grayscale opacity-40 mix-blend-lighten scale-110" data-alt="soft focus close up of two hands gently touching with warm golden ambient light and deep shadows in a minimalist aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCykPTCUvDhwS-a0NL3LPDe4OR-UUcCe8XdkrpIgkTtf9qNvsnVjurVPQlLNVzhKIDlFCJsfMfrMOrXwsxv682nD_4cAprSD3Pae6uFa_8mtOKCZ7Ud49LV9IXdwRVQ9EYZ6XSbXgJdw4Dre35PCj7_b7Eb4f3aUHPLsm-pZBn4jEd_jAuJcaTSmjX--oPd7ggjU8OIugOKWTTij8cVfs-8LVoXLpa1bXMd7fcRHSaAe_gB5v_r0GPNuII4FB__3ydcIcuCTqMA8DM"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-transparent"></div>
+<!-- Floating Celebration Overlay -->
+<div class="absolute inset-0 flex flex-col items-center justify-center p-8 text-center">
+<div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-tertiary/10 text-tertiary mb-6 border border-tertiary/20">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">favorite</span>
+<span class="text-[10px] font-bold tracking-[0.2em] uppercase">Symmetry Found</span>
+</div>
+<h1 class="text-5xl md:text-6xl font-extrabold font-headline leading-[1.1] tracking-tight text-white mb-4">
+                        Your <br/>Overlapping <br/><span class="text-primary-container">Desires</span>
+</h1>
+</div>
+</div>
+</section>
+<!-- Bento Match List -->
+<section class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-12">
+<!-- Match Item 1: Large Feature -->
+<div class="md:col-span-2 glass-card p-8 rounded-3xl border border-outline-variant/10 flex items-center justify-between group hover:bg-surface-container-high transition-all duration-500">
+<div class="flex flex-col gap-2">
+<span class="text-secondary font-bold text-[11px] tracking-widest uppercase">Deep Connection</span>
+<h3 class="text-2xl font-headline font-bold text-on-surface">Deep Conversation</h3>
+<p class="text-on-surface-variant text-sm max-w-[240px]">Explore the unsaid with guided prompts for intimacy.</p>
+</div>
+<div class="w-16 h-16 rounded-2xl bg-secondary/20 flex items-center justify-center text-secondary-fixed group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl">forum</span>
+</div>
+</div>
+<!-- Match Item 2 -->
+<div class="glass-card p-6 rounded-3xl border border-outline-variant/10 flex flex-col justify-between aspect-square group">
+<div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary-dim mb-4">
+<span class="material-symbols-outlined text-2xl">self_care</span>
+</div>
+<div>
+<h3 class="text-xl font-headline font-bold text-on-surface mb-2">15-Minute Massage</h3>
+<p class="text-on-surface-variant text-xs leading-relaxed">A gentle tactile exchange to release physical tension.</p>
+</div>
+</div>
+<!-- Match Item 3 -->
+<div class="glass-card p-6 rounded-3xl border border-outline-variant/10 flex flex-col justify-between aspect-square group">
+<div class="w-12 h-12 rounded-xl bg-tertiary/10 flex items-center justify-center text-tertiary-dim mb-4">
+<span class="material-symbols-outlined text-2xl">air</span>
+</div>
+<div>
+<h3 class="text-xl font-headline font-bold text-on-surface mb-2">Slow Breathwork</h3>
+<p class="text-on-surface-variant text-xs leading-relaxed">Synchronized breathing to align your nervous systems.</p>
+</div>
+</div>
+</section>
+<!-- Secondary Info -->
+<div class="text-center mb-16">
+<p class="text-on-surface-variant text-sm italic font-body">"The beauty of a match is the space where two worlds become one."</p>
+</div>
+</main>
+<!-- Fixed Action Bar (The Floating CTA) -->
+<div class="fixed bottom-0 left-0 w-full p-8 z-50 bg-gradient-to-t from-surface via-surface/80 to-transparent">
+<div class="max-w-2xl mx-auto">
+<button class="w-full bg-gradient-to-r from-secondary to-secondary-dim text-on-secondary py-5 rounded-3xl font-bold font-headline text-lg tracking-tight flex items-center justify-center gap-3 glow-secondary hover:opacity-90 active:scale-[0.98] transition-all">
+                Start Date Night
+                <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+<p class="text-center text-on-surface-variant text-[10px] uppercase tracking-[0.3em] font-bold mt-6 opacity-60">Ready when you both are</p>
+</div>
+</div>
+</body></html>

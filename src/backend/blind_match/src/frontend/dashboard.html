@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Versa Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="theme.css">
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-logo">Versa</div>
+        <div class="navbar-menu">
+            <div class="dropdown">
+                <button class="dropbtn">Dev Testing Menu</button>
+                <div class="dropdown-content">
+                    <a href="#" onclick="toggleUIState('no-partner')">No Partner</a>
+                    <a href="#" onclick="toggleUIState('partner-taking-compass')">Partner Taking Compass</a>
+                    <a href="#" onclick="toggleUIState('blind-matching')">Blind Matching</a>
+                    <a href="#" onclick="toggleUIState('date-scheduled')">Date Scheduled</a>
+                </div>
+            </div>
+            <button class="logout-btn">Logout</button>
+        </div>
+    </nav>
+
+    <div class="container dashboard">
+        <div class="dashboard-content">
+            <div id="no-partner-state" class="ui-state">
+                <h2>Waiting for Partner</h2>
+                <p>Your partner has not joined yet. Share your invite code!</p>
+                <button onclick="copyInviteCode()">Copy Invite Code</button>
+            </div>
+
+            <div id="partner-taking-compass-state" class="ui-state" style="display:none;">
+                <h2>Partner is Taking the Compass</h2>
+                <p>Your partner is currently answering questions to find your compatibility.</p>
+                <button onclick="nudgePartner()">Nudge Partner</button>
+            </div>
+
+            <div id="blind-matching-state" class="ui-state" style="display:none;">
+                <h2>Blind Matching - Shared Desires</h2>
+                <ul>
+                    <li>Shared desire: Adventure travel (Yes/Yes)</li>
+                    <li>Shared activity: Cooking together (Yes/Maybe)</li>
+                    <li>Shared interest: Board games (Maybe/Yes)</li>
+                </ul>
+            </div>
+
+            <div id="date-scheduled-state" class="ui-state" style="display:none;">
+                <h2>Upcoming Date Nights</h2>
+                <ul>
+                    <li>April 5, 2026 - 7:00 PM: Virtual Coffee Chat (15 min)</li>
+                    <li>April 12, 2026 - 8:00 PM: Movie Theme Discussion (15 min)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>

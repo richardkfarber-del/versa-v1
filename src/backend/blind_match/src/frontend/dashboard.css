@@ -1,0 +1,189 @@
+/* Dashboard Specific Styles */
+
+/* Adjust body to accommodate fixed navbar */
+body {
+    padding-top: 60px; /* Height of the navbar */
+}
+
+.navbar-menu {
+    display: flex;
+    align-items: center;
+}
+
+.logout-btn {
+    background: linear-gradient(135deg, #d9534f, #c9302c); /* Red gradient for logout */
+    color: #ffffff;
+    border: none;
+    padding: 8px 15px;
+    border-radius: var(--radius-button);
+    cursor: pointer;
+    font-size: 0.9em;
+    margin-left: 15px;
+    font-weight: 700;
+    font-family: var(--font-body);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 5px 15px rgba(217, 83, 79, 0.2);
+}
+
+.logout-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px rgba(217, 83, 79, 0.3);
+}
+
+/* Dropdown Menu */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropbtn {
+    background: linear-gradient(135deg, var(--secondary-saffron), #ffb74d); /* Orange gradient for dev menu */
+    color: #4a2800;
+    padding: 8px 15px;
+    border: none;
+    cursor: pointer;
+    border-radius: var(--radius-button);
+    font-size: 0.9em;
+    font-weight: 700;
+    font-family: var(--font-body);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 5px 15px rgba(255, 152, 0, 0.2);
+}
+
+.dropbtn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px rgba(255, 152, 0, 0.3);
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: var(--surface-container-high);
+    min-width: 200px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.4);
+    z-index: 1;
+    right: 0;
+    border-radius: 8px;
+    border: 1px solid var(--ghost-border);
+    overflow: hidden;
+}
+
+.dropdown-content a {
+    color: rgba(255, 255, 255, 0.85);
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    font-family: var(--font-body);
+}
+
+.dropdown-content a:hover {
+    background-color: var(--surface-container-low);
+    color: var(--primary-plum);
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+/* Dashboard Content Specific Styling (within .container) */
+.dashboard-content {
+    padding: 20px 0; /* Adjust padding as container has its own padding */
+    color: #ffffff;
+}
+
+.ui-state {
+    background: var(--surface-container-low);
+    padding: 24px;
+    border-radius: 16px;
+    margin-bottom: 24px;
+    border: 1px solid var(--ghost-border);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.ui-state h2 {
+    color: var(--primary-plum); /* Plum for section titles */
+    margin-top: 0;
+    font-family: var(--font-headline);
+    font-weight: 600;
+    font-size: 2em;
+    letter-spacing: -0.01em;
+}
+
+.ui-state p {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1em;
+}
+
+.ui-state ul {
+    list-style: none;
+    padding: 0;
+}
+
+.ui-state li {
+    background-color: var(--surface-container-high);
+    padding: 12px 18px;
+    margin-bottom: 8px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.95em;
+}
+
+/* Buttons within UI states should also use consistent styling */
+.ui-state button {
+    width: auto;
+    padding: 12px 25px;
+    margin-top: 15px;
+    background: linear-gradient(135deg, var(--secondary-saffron), #ffb74d);
+    color: #4a2800;
+    border: none;
+    border-radius: var(--radius-button);
+    font-size: 1em;
+    font-weight: 700;
+    font-family: var(--font-body);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 8px 15px rgba(255, 152, 0, 0.2);
+}
+
+.ui-state button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 20px rgba(255, 152, 0, 0.3);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 600px) {
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .navbar-menu {
+        width: 100%;
+        justify-content: space-between;
+        margin-top: 10px;
+    }
+    .dropdown, .logout-btn {
+        margin-top: 5px;
+        width: 48%;
+    }
+    .dropbtn, .logout-btn {
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .dropdown-content {
+        position: static;
+        width: 100%;
+        box-shadow: none;
+        border-top: 1px solid var(--ghost-border);
+        border-radius: 0;
+    }
+    .container.dashboard {
+        margin: 10px; /* Adjust margin for mobile */
+        padding: 24px;
+        border-radius: 16px;
+    }
+    .ui-state {
+        padding: 18px;
+        border-radius: 12px;
+    }
+}

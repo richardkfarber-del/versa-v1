@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Versa - Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-midnight: #0e0e0e;
+            --surface-container-low: #131313;
+            --surface-container-lowest: #000000;
+            --surface-container-high: #201f1f;
+            --surface-container-highest: #262626;
+            --primary-plum: #f183ff;
+            --primary-container: #e770f8;
+            --secondary-saffron: #ff9800;
+            --tertiary-emerald: #b8ffbb;
+            --ghost-border: rgba(72, 72, 71, 0.2);
+            --font-headline: 'Manrope', sans-serif;
+            --font-body: 'Plus Jakarta Sans', sans-serif;
+            --spacing-section: 2.75rem;
+            --radius-button: 1.5rem;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-midnight);
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            background-image: radial-gradient(circle at top right, rgba(241, 131, 255, 0.1), transparent 60%),
+                              radial-gradient(circle at bottom left, rgba(255, 152, 0, 0.05), transparent 60%);
+        }
+
+        /* Glassmorphic Sidebar Nav */
+        nav.sidebar {
+            width: 280px;
+            background: rgba(19, 19, 19, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 40px 24px;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--ghost-border);
+            height: 100vh;
+            position: sticky;
+            top: 0;
+        }
+
+        .logo-container {
+            margin-bottom: 64px;
+            padding: 0 16px;
+        }
+
+        .logo-container img {
+            max-width: 120px;
+            display: block;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .nav-links li a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 1.125rem;
+            font-weight: 500;
+            padding: 16px 24px;
+            border-radius: var(--radius-button);
+            display: block;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links li a:hover, .nav-links li a.active {
+            color: #ffffff;
+            background: var(--surface-container-high);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .nav-links li a.active {
+            color: var(--primary-plum);
+            background: rgba(241, 131, 255, 0.05);
+        }
+
+        .user-profile {
+            margin-top: auto;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: var(--surface-container-high);
+            border-radius: 20px;
+        }
+
+        .avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-plum), var(--secondary-saffron));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: var(--bg-midnight);
+            font-size: 1.2rem;
+        }
+
+        /* Main Content Area */
+        main {
+            flex: 1;
+            padding: 64px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            margin-bottom: var(--spacing-section);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        h1 {
+            font-family: var(--font-headline);
+            font-size: 3.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+        }
+
+        .subtitle {
+            font-size: 1.25rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 16px;
+            font-family: var(--font-body);
+        }
+
+        /* Content Cards with Tonal Layering */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 32px;
+        }
+
+        .card {
+            background: var(--surface-container-low);
+            padding: 40px;
+            border-radius: 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            background: var(--surface-container-high);
+        }
+
+        .card h3 {
+            font-family: var(--font-headline);
+            font-size: 2rem;
+            font-weight: 600;
+            color: #ffffff;
+            z-index: 1;
+        }
+
+        .card p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.125rem;
+            line-height: 1.6;
+            z-index: 1;
+        }
+
+        .card .glow-orb {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--tertiary-emerald) 0%, transparent 70%);
+            opacity: 0.15;
+            bottom: -50px;
+            right: -50px;
+            filter: blur(30px);
+            z-index: 0;
+        }
+
+        .card.plum-glow .glow-orb {
+            background: radial-gradient(circle, var(--primary-plum) 0%, transparent 70%);
+        }
+
+        .card.saffron-glow .glow-orb {
+            background: radial-gradient(circle, var(--secondary-saffron) 0%, transparent 70%);
+        }
+
+        /* Floating Action Button */
+        .fab {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-plum), var(--primary-container));
+            border: none;
+            color: #000;
+            font-size: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 20px 40px rgba(241, 131, 255, 0.4);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .fab:hover {
+            transform: scale(1.05);
+            box-shadow: 0 25px 50px rgba(241, 131, 255, 0.5);
+        }
+
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="logo-container">
+            <img src="company_logo.png" alt="Versa Logo">
+        </div>
+        <ul class="nav-links">
+            <li><a href="#" class="active">Sanctuary</a></li>
+            <li><a href="#">Compass</a></li>
+            <li><a href="#">Date Night</a></li>
+            <li><a href="#">Matches</a></li>
+            <li><a href="#">Settings</a></li>
+        </ul>
+        <div class="user-profile">
+            <div class="avatar">J</div>
+            <div class="user-info">
+                <div style="font-weight: 600; font-size: 1rem;">Jamie Doe</div>
+                <div style="font-size: 0.85rem; color: rgba(255,255,255,0.6);">Explorer</div>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <header>
+            <div>
+                <h1>Good Evening,<br>Jamie.</h1>
+                <p class="subtitle">Your radiant sanctuary awaits.</p>
+            </div>
+        </header>
+
+        <section class="card-grid">
+            <div class="card plum-glow">
+                <div class="glow-orb"></div>
+                <h3>Grounding</h3>
+                <p>Recentering your energy before you connect.</p>
+            </div>
+            <div class="card saffron-glow">
+                <div class="glow-orb"></div>
+                <h3>Connection Compass</h3>
+                <p>Discover new relational alignment.</p>
+            </div>
+            <div class="card">
+                <div class="glow-orb"></div>
+                <h3>Active Date Night</h3>
+                <p>Deepen your bond with guided experiences.</p>
+            </div>
+        </section>
+    </main>
+
+    <button class="fab">+</button>
+
+</body>
+</html>

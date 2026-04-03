@@ -1,0 +1,62 @@
+/* Partner Linking Specific Styles */
+
+/* Overrides for container for this page specifically */
+.container.partner-linking-container {
+    max-width: 500px; /* Adjust width for partner linking page */
+    text-align: center;
+    padding: 40px;
+}
+
+.primary-button {
+    width: 100%;
+    padding: 16px;
+    margin-top: 16px;
+    background: linear-gradient(135deg, var(--secondary-saffron), #ffb74d);
+    color: #4a2800;
+    border: none;
+    border-radius: var(--radius-button);
+    font-size: 1.125rem;
+    font-weight: 700;
+    font-family: var(--font-body);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 10px 20px rgba(255, 152, 0, 0.2);
+}
+
+.primary-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 25px rgba(255, 152, 0, 0.3);
+}
+
+.secondary-button {
+    width: 100%;
+    padding: 16px;
+    margin-top: 16px;
+    background: var(--surface-container-high); /* Dark background for secondary */
+    color: rgba(255, 255, 255, 0.85);
+    border: 1px solid var(--ghost-border);
+    border-radius: var(--radius-button);
+    font-size: 1.125rem;
+    font-weight: 700;
+    font-family: var(--font-body);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.secondary-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.3);
+    border-color: var(--primary-plum); /* Accent on hover */
+    color: var(--primary-plum);
+}
+
+/* Ensure inputs from theme.css are respected */
+input[type="text"] {
+    margin-top: 10px; /* Add some space above input */
+    width: calc(100% - 32px); /* Adjust for padding */
+}
+
+.footer-link {
+    margin-top: 30px; /* More space for the link */
+}

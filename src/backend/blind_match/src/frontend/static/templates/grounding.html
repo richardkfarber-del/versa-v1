@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Versa - Grounding</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+</head>
+<body class="bg-[#0e0e0e] text-white font-body overflow-hidden h-screen w-screen flex flex-col">
+<header class="bg-transparent backdrop-blur-xl full-width top-0 z-50 flex justify-between items-center w-full px-6 py-8">
+<div class="flex items-center gap-2">
+<span class="text-2xl font-bold tracking-tighter text-[#f183ff]">Versa</span>
+</div>
+<div class="flex items-center">
+<div class="h-1.5 w-1.5 rounded-full bg-green-400 animate-pulse mr-2"></div>
+<span class="text-[10px] font-semibold uppercase tracking-[0.2em] text-gray-500">Grounding</span>
+</div>
+</header>
+<main class="flex-grow flex flex-col items-center justify-center relative px-8">
+<div class="relative z-10 flex flex-col items-center">
+<div class="w-64 h-64 rounded-full border border-green-500/40 flex items-center justify-center relative shadow-[0_0_60px_rgba(184,255,187,0.15)]">
+<div class="w-48 h-48 rounded-full bg-green-500/20 backdrop-blur-md"></div>
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="text-white text-3xl font-light tracking-widest uppercase opacity-80">Inhale</span>
+</div>
+</div>
+<div class="mt-24 text-center space-y-6 max-w-xs">
+<h1 class="text-white text-4xl font-extrabold tracking-tight">Pause</h1>
+<p class="text-gray-400 text-lg font-medium leading-relaxed">You are safe. Take all the time you need.</p>
+</div>
+</div>
+</main>
+<footer class="p-12 flex flex-col items-center relative z-20">
+<button class="group flex flex-col items-center gap-4 transition-transform duration-300 hover:scale-105 active:scale-95">
+<div class="bg-[#131313] p-6 rounded-full border border-white/10 shadow-xl">
+<span class="material-symbols-outlined text-[#ff9800] text-4xl">play_arrow</span>
+</div>
+<span class="text-xs font-bold uppercase tracking-widest text-gray-500 group-hover:text-white transition-colors">Resume when ready</span>
+</button>
+</footer>
+</body></html>
