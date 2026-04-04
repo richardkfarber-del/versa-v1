@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/app/workspace/DocuSwarm/wsgi.py", line 1, in <module>
+    from app import create_app
+  File "/app/workspace/DocuSwarm/app.py", line 2, in <module>
+    from flask import Flask
+ModuleNotFoundError: No module named 'flask'

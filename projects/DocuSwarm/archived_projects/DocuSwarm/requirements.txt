@@ -1,0 +1,10 @@
+Flask==3.0.0
+google-generativeai
+python-dotenv
+gunicorn
+psycopg2-binary
+clerk-backend-api
+stripe
+PyJWT[crypto]
+requests
+posthog

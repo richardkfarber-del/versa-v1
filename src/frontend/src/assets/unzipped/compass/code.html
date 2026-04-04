@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Versa - Connection Compass</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "tertiary-fixed": "#5cfd80",
+              "surface-variant": "#262626",
+              "on-error": "#490013",
+              "on-secondary-fixed-variant": "#774400",
+              "on-error-container": "#ffb2b9",
+              "error-dim": "#d73357",
+              "on-secondary-fixed": "#4f2c00",
+              "surface-container-low": "#131313",
+              "surface-tint": "#f183ff",
+              "tertiary-fixed-dim": "#4bee74",
+              "on-tertiary-fixed": "#004819",
+              "on-tertiary-fixed-variant": "#006827",
+              "secondary-container": "#8b5000",
+              "primary-container": "#e770f8",
+              "primary": "#f183ff",
+              "surface-container-highest": "#262626",
+              "secondary-dim": "#ec8c00",
+              "on-surface": "#ffffff",
+              "outline": "#767575",
+              "outline-variant": "#484847",
+              "inverse-primary": "#9b26af",
+              "inverse-surface": "#fcf9f8",
+              "surface-container": "#1a1919",
+              "surface-container-high": "#201f1f",
+              "surface": "#0e0e0e",
+              "tertiary-container": "#5cfd80",
+              "tertiary": "#b8ffbb",
+              "on-background": "#ffffff",
+              "on-tertiary": "#006727",
+              "primary-dim": "#e46df5",
+              "surface-dim": "#0e0e0e",
+              "secondary": "#ff9800",
+              "surface-container-lowest": "#000000",
+              "on-secondary": "#4a2800",
+              "secondary-fixed": "#ffc791",
+              "primary-fixed-dim": "#db65ec",
+              "on-secondary-container": "#fff6f1",
+              "secondary-fixed-dim": "#ffb467",
+              "on-tertiary-container": "#005d22",
+              "on-primary": "#540062",
+              "error-container": "#a70138",
+              "on-primary-container": "#41004c",
+              "primary-fixed": "#ea73fb",
+              "error": "#ff6e84",
+              "surface-bright": "#2c2c2c",
+              "tertiary-dim": "#4bee74",
+              "on-surface-variant": "#adaaaa",
+              "background": "#0e0e0e",
+              "on-primary-fixed-variant": "#540062",
+              "on-primary-fixed": "#010002"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Plus Jakarta Sans"],
+              "label": ["Plus Jakarta Sans"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .bg-fluid-mesh {
+            background: radial-gradient(circle at 20% 30%, rgba(241, 131, 255, 0.15) 0%, transparent 40%),
+                        radial-gradient(circle at 80% 70%, rgba(184, 255, 187, 0.1) 0%, transparent 40%),
+                        radial-gradient(circle at 50% 50%, rgba(255, 152, 0, 0.05) 0%, transparent 60%);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container min-h-screen overflow-hidden relative">
+<!-- Background Abstract Fluid Shapes -->
+<div class="absolute inset-0 z-0 bg-fluid-mesh"></div>
+<div class="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] rounded-full bg-primary/5 blur-[120px]"></div>
+<div class="absolute bottom-[-20%] right-[-10%] w-[70%] h-[70%] rounded-full bg-tertiary/5 blur-[150px]"></div>
+<!-- Top Navigation / Shell Suppression (Task-Focused) -->
+<!-- Applying Shared Component TopAppBar styles manually for the Logo/Back action -->
+<header class="relative z-50 flex justify-between items-center w-full px-6 py-8">
+<div class="flex items-center gap-4">
+<img alt="Versa Logo" class="h-8 object-contain bg-transparent" data-alt="Versa logo with a vibrant colorful infinity-style symbol and off-white 'Versa' text on a transparent background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrvmj9fE8wymT5lgT3LS-1I4tErKwpKlcZZuBgCtk4uUqeqJUROyAn248BClzDQ4WiWQNsUuKA0ARQj5N1rlYYBIBTJFlbVQOgKk7ssUajQdcgft3WfNInH_cstvFo8Z1t736NVFdm33kSYq3d8aCaFb2HpGR8Y4DSf5Xfjcxjom-cP04c0gupbVoRMpRPIwQGKcVlElt1TdH9ZrHLHnB0hWT7XO4qntCiX9borKuvuxlTIfWS03Qee_G58IWo0ZPhlTmh7FsypTg"/>
+</div>
+<button class="flex items-center justify-center w-12 h-12 rounded-full bg-surface-container-low backdrop-blur-xl hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined text-on-surface-variant">close</span>
+</button>
+</header>
+<!-- Main Content Canvas -->
+<main class="relative z-10 max-w-2xl mx-auto px-6 pt-4 pb-24 flex flex-col items-center min-h-[707px] justify-center text-center">
+<!-- Progress Indicator -->
+<div class="w-full max-w-xs mb-16">
+<div class="flex justify-center gap-2 mb-4">
+<div class="h-1 w-8 rounded-full bg-primary"></div>
+<div class="h-1 w-8 rounded-full bg-primary/30"></div>
+<div class="h-1 w-8 rounded-full bg-primary/10"></div>
+<div class="h-1 w-8 rounded-full bg-primary/10"></div>
+</div>
+<p class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant">Connection Compass • Step 1 of 12</p>
+</div>
+<!-- Question Area -->
+<div class="mb-16 space-y-6">
+<h1 class="font-headline text-4xl md:text-5xl font-extrabold tracking-tight leading-tight text-on-surface">
+                I'm interested in trying a <span class="text-secondary">massage</span> with my partner.
+            </h1>
+<p class="text-on-surface-variant text-lg max-w-md mx-auto leading-relaxed">
+                Be honest with yourself—there are no wrong answers in your sanctuary.
+            </p>
+</div>
+<!-- Selection Area: Interaction Buttons -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
+<!-- Yes Button (Emerald) -->
+<button class="group relative flex flex-col items-center justify-center p-8 rounded-[40px] bg-surface-container-low hover:bg-tertiary/10 transition-all duration-300 border border-white/5 overflow-hidden">
+<div class="w-20 h-20 mb-4 rounded-full bg-tertiary/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-tertiary-fixed text-4xl" data-weight="fill" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<span class="font-label font-bold text-xl tracking-wide text-tertiary">Yes</span>
+<div class="absolute inset-0 bg-tertiary/5 opacity-0 group-active:opacity-100 transition-opacity"></div>
+</button>
+<!-- Maybe Button (Mango) -->
+<button class="group relative flex flex-col items-center justify-center p-8 rounded-[40px] bg-surface-container-low hover:bg-secondary/10 transition-all duration-300 border border-white/5 overflow-hidden">
+<div class="w-20 h-20 mb-4 rounded-full bg-secondary/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-secondary text-4xl" data-weight="fill" style="font-variation-settings: 'FILL' 1;">question_mark</span>
+</div>
+<span class="font-label font-bold text-xl tracking-wide text-secondary">Maybe</span>
+<div class="absolute inset-0 bg-secondary/5 opacity-0 group-active:opacity-100 transition-opacity"></div>
+</button>
+<!-- No Button (Plum) -->
+<button class="group relative flex flex-col items-center justify-center p-8 rounded-[40px] bg-surface-container-low hover:bg-primary/10 transition-all duration-300 border border-white/5 overflow-hidden">
+<div class="w-20 h-20 mb-4 rounded-full bg-primary/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary text-4xl" data-weight="fill" style="font-variation-settings: 'FILL' 1;">cancel</span>
+</div>
+<span class="font-label font-bold text-xl tracking-wide text-primary">No</span>
+<div class="absolute inset-0 bg-primary/5 opacity-0 group-active:opacity-100 transition-opacity"></div>
+</button>
+</div>
+</main>
+<!-- Contextual Footer -->
+<footer class="fixed bottom-0 left-0 w-full p-8 flex justify-center z-50">
+<div class="flex gap-4 items-center">
+<span class="material-symbols-outlined text-on-surface-variant/40 text-sm">lock</span>
+<span class="text-on-surface-variant/60 font-label text-xs tracking-wider uppercase">Your responses are private and encrypted</span>
+</div>
+</footer>
+<!-- Glassmorphic Decorative Elements -->
+<div class="fixed top-1/4 right-[-50px] w-64 h-64 rounded-full bg-primary/10 blur-[80px] pointer-events-none"></div>
+<div class="fixed bottom-1/4 left-[-50px] w-80 h-80 rounded-full bg-secondary/5 blur-[100px] pointer-events-none"></div>
+</body></html>

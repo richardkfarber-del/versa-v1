@@ -1,0 +1,122 @@
+{
+  "meta": {
+    "lastTouchedVersion": "2026.3.23",
+    "lastTouchedAt": "2026-03-29T06:09:17.660Z"
+  },
+  "wizard": {
+    "lastRunAt": "2026-03-27T00:39:53.085Z",
+    "lastRunVersion": "2026.3.23",
+    "lastRunCommand": "configure",
+    "lastRunMode": "local"
+  },
+  "browser": {
+    "noSandbox": true
+  },
+  "acp": {
+    "enabled": true,
+    "backend": "acpx"
+  },
+  "agents": {
+    "defaults": {
+      "model": "google/gemini-2.5-flash",
+      "workspace": "/app/workspace",
+      "compaction": {
+        "mode": "safeguard"
+      },
+      "maxConcurrent": 4,
+      "subagents": {
+        "maxConcurrent": 8
+      },
+      "sandbox": {
+        "browser": {
+          "enabled": true,
+          "headless": true
+        }
+      }
+    },
+    "list": [
+      {
+        "id": "main",
+        "subagents": {
+          "allowAgents": [
+            "*"
+          ]
+        }
+      },
+      {
+        "id": "oracle",
+        "name": "oracle",
+        "workspace": "/app/workspace",
+        "agentDir": "/home/node/.openclaw/agents/oracle/agent",
+        "model": "google/gemini-3-flash",
+        "system": "You are the Versa Product Owner. Your source of truth is /app/workspace/Versa/docs/mvp_outline.md. Maintain the backlog at /app/workspace/Versa/docs/backlog.md. STRICT TICKET RULES: 1. User Stories MUST use Gherkin Acceptance Criteria from a third-person perspective (e.g., \'Given a user is...\'). 2. Tech and Spike tickets MUST use a standard bulleted list for Acceptance Criteria (No Gherkin). 3. Bug tickets MUST use an \'Expected Behavior\' section instead of AC. When a ticket passes QA, read the backlog and issue the next prioritized ticket. When a user story is ready for development, you MUST first extract it from `backlog.md` and save it as a dedicated markdown file (e.g., `/app/workspace/Versa/docs/tickets/US001_secure_partner_linking.md`). Then, you will report to Alfred (me) the absolute path to *this ticket file* as your ONLY output. You will await Alfred's instruction to proceed.",
+      {
+        "id": "lucius",
+        "name": "lucius",
+        "workspace": "/app/workspace",
+        "agentDir": "/home/node/.openclaw/agents/lucius/agent",
+        "model": "google/gemini-3-flash"
+      },
+      {
+        "id": "cyborg",
+        "name": "cyborg",
+        "workspace": "/app/workspace",
+        "agentDir": "/home/node/.openclaw/agents/cyborg/agent",
+        "model": "google/gemini-3-flash"
+      },
+      {
+        "id": "lantern",
+        "name": "Green Lantern",
+        "workspace": "/app/workspace",
+        "agentDir": "/home/node/.openclaw/agents/lantern/agent",
+        "model": "google/gemini-3-flash"
+      }
+    ]
+  },
+  "messages": {
+    "ackReactionScope": "group-mentions"
+  },
+  "commands": {
+    "native": "auto",
+    "nativeSkills": "auto",
+    "restart": true,
+    "ownerDisplay": "raw"
+  },
+  "channels": {
+    "telegram": {
+      "enabled": true,
+      "dmPolicy": "pairing",
+      "groupPolicy": "allowlist",
+      "streaming": "partial"
+    }
+  },
+  "gateway": {
+    "mode": "local",
+    "auth": {
+      "mode": "token",
+      "token": "01a630b7f9e1cb21066e1456264185833b8a95d82e56e574"
+    }
+  },
+  "mcp": {
+    "servers": {
+      "stitch": {
+        "url": "https://stitch.googleapis.com/mcp",
+        "type": "http",
+        "headers": {
+          "Authorization": "REDACTED",
+          "X-Goog-User-Project": "docuswarm"
+        }
+      }
+    }
+  },
+  "plugins": {
+    "entries": {
+      "acpx": {
+        "enabled": true,
+        "config": {
+          "permissionMode": "approve-all"
+        }
+      }
+    }
+  }
+}

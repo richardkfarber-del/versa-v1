@@ -1,0 +1,198 @@
+[
+  {
+    "Filename": "US-MULTI-LANGUAGE-GERMAN.md",
+    "Title": "User Story: Multi-language Support - German",
+    "Assignee": "Unassigned",
+    "Priority": "Unspecified",
+    "Status": "CLOSED"
+  },
+  {
+    "Filename": "ABANDONED_UX-402_Data_Weave_Dashboard.md",
+    "Title": "Design the \"Data Weave\" Dashboard Screen in Google Stitch",
+    "Assignee": "Green Lantern",
+    "Priority": "High",
+    "Status": "CLOSED"
+  },
+  {
+    "Filename": "MVP-UI-002_Match_Reveal.md",
+    "Title": "The Match Reveal Screen",
+    "Assignee": "Green Lantern",
+    "Priority": "High / P1",
+    "Status": "CLOSED"
+  },
+  {
+    "Filename": "MVP-BE-002_Blind_Match_Engine.md",
+    "Title": "The \"Blind Match\" Engine",
+    "Assignee": "Lucius / Cyborg",
+    "Priority": "High / P1",
+    "Status": "CLOSED"
+  },
+  {
+    "Filename": "bug-ws-step1-session-map.md",
+    "Title": "Step 1: Initialize Session Map and Message Parser",
+    "Assignee": "Lucius",
+    "Priority": "Unspecified",
+    "Status": "CLOSED"
+  },
+  {
+    "Filename": "US-THIRD-PARTY-CALENDAR-SYNC.md",
+    "Title": "User Story: Third-Party API Integrations - Calendar Sync",
+    "Assignee": "Unassigned",
+    "Priority": "Unspecified",
+    "Status": "CLOSED"
+  },
+  {
+    "Filename": "MVP-BE-001_Partner_Linking.md",
+    "Title": "Partner Linking & Secure Session State",
+    "Assignee": "Lucius / Cyborg",
+    "Priority": "High / P1",
+    "Status": "CLOSED"
+  },
+  {
+    "Filename": "US-CONTENT-COMMENTING.md",
+    "Title": "User Story: Advanced Content Interaction - Commenting",
+    "Assignee": "Unassigned",
+    "Priority": "Unspecified",
+    "Status": "CLOSED"
+  },
+  {
+    "Filename": "bug-ws-step3-redlight.md",
+    "Title": "Step 3: Implement Red Light Safety Feature",
+    "Assignee": "Lucius",
+    "Priority": "Unspecified",
+    "Status": "CLOSED"
+  },
+  {
+    "Filename": "US-ADMIN-CONTENT-MODERATION.md",
+    "Title": "User Story: Admin Dashboard for Content Moderation",
+    "Assignee": "Unassigned",
+    "Priority": "Unspecified",
+    "Status": "CLOSED"
+  },
+  {
+    "Filename": "US-MULTI-LANGUAGE-SPANISH.md",
+    "Title": "User Story: Multi-language Support - Spanish",
+    "Assignee": "Unassigned",
+    "Priority": "Unspecified",
+    "Status": "CLOSED"
+  },
+  {
+    "Filename": "US-CONTENT-LIKING.md",
+    "Title": "User Story: Advanced Content Interaction - Liking",
+    "Assignee": "Unassigned",
+    "Priority": "Unspecified",
+    "Status": "CLOSED"
+  },
+  {
+    "Filename": "US-OFFLINE-CONTENT-ACCESS.md",
+    "Title": "User Story: Offline Mode Capabilities - Content Access",
+    "Assignee": "Unassigned",
+    "Priority": "Unspecified",
+    "Status": "CLOSED"
+  },
+  {
+    "Filename": "US-REALTIME-CHAT.md",
+    "Title": "User Story: Real-time Chat Functionality",
+    "Assignee": "Unassigned",
+    "Priority": "Unspecified",
+    "Status": "CLOSED"
+  },
+  {
+    "Filename": "BUG-MVP-UI-003-aesthetic-violations.md",
+    "Title": "Bug Ticket: MVP-UI-003 Aesthetic Violations",
+    "Assignee": "Unassigned",
+    "Priority": "Unspecified",
+    "Status": "CLOSED"
+  },
+  {
+    "Filename": "BUG-DW-001_Responsiveness_Interactivity.md",
+    "Title": "Data Weave Dashboard: Critical Responsiveness & Interactivity Issues",
+    "Assignee": "Lucius",
+    "Priority": "High",
+    "Status": "CLOSED"
+  },
+  {
+    "Filename": "US-THIRD-PARTY-MEDIA-EMBEDS.md",
+    "Title": "User Story: Third-Party API Integrations - External Media Embeds",
+    "Assignee": "Unassigned",
+    "Priority": "Unspecified",
+    "Status": "CLOSED"
+  },
+  {
+    "Filename": "US-OFFLINE-BASIC-FUNCTIONALITY.md",
+    "Title": "User Story: Offline Mode Capabilities - Basic Functionality",
+    "Assignee": "Unassigned",
+    "Priority": "Unspecified",
+    "Status": "CLOSED"
+  },
+  {
+    "Filename": "bug-ws-step2-timer-loop.md",
+    "Title": "Step 2: Implement Timer Loop",
+    "Assignee": "Lucius",
+    "Priority": "Unspecified",
+    "Status": "CLOSED"
+  },
+  {
+    "Filename": "ABANDONED_MVP-UI-001_Main_Dashboard_New_Stitch_Flow.md",
+    "Title": "Main Dashboard & \"New Stitch\" Initialization Flow",
+    "Assignee": "Green Lantern",
+    "Priority": "Highest / P0",
+    "Status": "CLOSED"
+  },
+  {
+    "Filename": "US-CONTENT-SHARING.md",
+    "Title": "User Story: Advanced Content Interaction - Sharing",
+    "Assignee": "Unassigned",
+    "Priority": "Unspecified",
+    "Status": "CLOSED"
+  },
+  {
+    "Filename": "MVP-UI-003_Active_Date_Night.md",
+    "Title": "Active Date Night Screen",
+    "Assignee": "Green Lantern",
+    "Priority": "High / P1",
+    "Status": "CLOSED"
+  },
+  {
+    "Filename": "US-PERSONALIZED-RECOMMENDATIONS.md",
+    "Title": "User Story: Personalized Content Recommendation Engine",
+    "Assignee": "Unassigned",
+    "Priority": "Unspecified",
+    "Status": "CLOSED"
+  },
+  {
+    "Filename": "VERSA-US-002_Connection_Compass_Quiz.md",
+    "Title": "VERSA-US-002: The Connection Compass Quiz",
+    "Assignee": "Unassigned",
+    "Priority": "Unspecified",
+    "Status": "CLOSED"
+  },
+  {
+    "Filename": "bug-websocket-leak-redlight.md",
+    "Title": "Bug Ticket: websocket.js Memory Leak & Missing Red Light Feature",
+    "Assignee": "Lucius",
+    "Priority": "CRITICAL",
+    "Status": "CLOSED"
+  },
+  {
+    "Filename": "US-SECURE-PAYMENT-INTEGRATION.md",
+    "Title": "User Story: Secure Payment Integration",
+    "Assignee": "Unassigned",
+    "Priority": "Unspecified",
+    "Status": "CLOSED"
+  },
+  {
+    "Filename": "bug-matchreveal-framework.md",
+    "Title": "Bug Ticket: MatchReveal.tsx Framework Mismatch",
+    "Assignee": "Green Lantern",
+    "Priority": "CRITICAL",
+    "Status": "CLOSED"
+  },
+  {
+    "Filename": "BUG-CC-001_Critical_Privacy_Vulnerability.md",
+    "Title": "BUG-CC-001: Connection Compass: Critical Privacy Vulnerability - Sensitive Data Exposure",
+    "Assignee": "Lucius",
+    "Priority": "Critical (P0)",
+    "Status": "CLOSED"
+  }
+]

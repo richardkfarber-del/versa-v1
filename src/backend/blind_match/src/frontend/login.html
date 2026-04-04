@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Versa | Welcome Back to Your Sanctuary</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "background": "#0e0e0e",
+              "on-tertiary": "#006727",
+              "tertiary-fixed-dim": "#4bee74",
+              "surface-tint": "#f183ff",
+              "on-surface-variant": "#adaaaa",
+              "on-secondary-container": "#fff6f1",
+              "on-error-container": "#ffb2b9",
+              "primary-fixed-dim": "#db65ec",
+              "on-error": "#490013",
+              "tertiary": "#b8ffbb",
+              "surface-variant": "#262626",
+              "tertiary-container": "#5cfd80",
+              "surface-container-lowest": "#000000",
+              "on-background": "#ffffff",
+              "secondary-container": "#8b5000",
+              "on-tertiary-fixed": "#004819",
+              "inverse-primary": "#9b26af",
+              "secondary-dim": "#ec8c00",
+              "error": "#ff6e84",
+              "surface": "#0e0e0e",
+              "primary-container": "#e770f8",
+              "tertiary-dim": "#4bee74",
+              "primary": "#f183ff",
+              "on-secondary-fixed-variant": "#774400",
+              "inverse-on-surface": "#565555",
+              "primary-dim": "#e46df5",
+              "secondary": "#ff9800",
+              "on-surface": "#ffffff",
+              "on-primary-container": "#41004c",
+              "surface-container-low": "#131313",
+              "secondary-fixed-dim": "#ffb467",
+              "secondary-fixed": "#ffc791",
+              "on-secondary": "#4a2800",
+              "inverse-surface": "#fcf9f8",
+              "on-tertiary-container": "#005d22",
+              "primary-fixed": "#ea73fb",
+              "surface-bright": "#2c2c2c",
+              "on-secondary-fixed": "#4f2c00",
+              "surface-dim": "#0e0e0e",
+              "error-dim": "#d73357",
+              "surface-container": "#1a1919",
+              "outline": "#767575",
+              "surface-container-highest": "#262626",
+              "on-primary-fixed-variant": "#540062",
+              "surface-container-high": "#201f1f",
+              "on-tertiary-fixed-variant": "#006827",
+              "error-container": "#a70138",
+              "outline-variant": "#484847",
+              "on-primary-fixed": "#010002",
+              "on-primary": "#540062",
+              "tertiary-fixed": "#5cfd80"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Plus Jakarta Sans"],
+              "label": ["Plus Jakarta Sans"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "1.5rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .glow-text {
+            text-shadow: 0 0 20px rgba(241, 131, 255, 0.3);
+        }
+        .bg-mesh {
+            background: radial-gradient(circle at 20% 30%, rgba(241, 131, 255, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 70%, rgba(255, 152, 0, 0.08) 0%, transparent 50%);
+        }
+        .input-error {
+            border: 1px solid #ff6e84 !important;
+            background-color: rgba(167, 1, 56, 0.05) !important;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body selection:bg-primary/30 selection:text-primary min-h-screen flex flex-col relative overflow-hidden">
+    <!-- Abstract Background Elements -->
+    <div class="absolute inset-0 z-0 bg-mesh pointer-events-none"></div>
+    <div class="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] bg-primary/5 blur-[120px] rounded-full"></div>
+    <div class="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] bg-secondary/5 blur-[100px] rounded-full"></div>
+
+    <!-- Main Content -->
+    <main class="relative z-10 flex-grow flex items-center justify-center p-6">
+        <div class="w-full max-w-[480px]">
+            <!-- Branding Header -->
+            <div class="text-center mb-10">
+                <img alt="Versa Logo" class="h-24 mx-auto mb-6 drop-shadow-[0_0_25px_rgba(241,131,255,0.4)] transition-all duration-500 hover:scale-105" src="company_logo.png"/>
+            </div>
+
+            <!-- Login Card -->
+            <div class="bg-surface-container-low/80 backdrop-blur-2xl rounded-[2.75rem] p-10 md:p-12 shadow-2xl border border-outline-variant/10">
+                <div class="mb-10 text-center">
+                    <h1 class="font-headline text-3xl md:text-4xl font-extrabold tracking-tight text-on-background mb-3 glow-text">
+                        Welcome Back
+                    </h1>
+                    <p class="text-on-surface-variant font-medium tracking-wide">
+                        Enter your sanctuary.
+                    </p>
+                </div>
+
+                <form id="loginForm" class="space-y-[2rem]">
+                    <!-- Generic Error Message -->
+                    <div id="authError" class="hidden bg-error-container/20 border border-error/30 p-4 rounded-xl flex items-center gap-3">
+                        <span class="material-symbols-outlined text-error" data-icon="error">error</span>
+                        <p class="text-error text-sm font-semibold">Invalid email or password</p>
+                    </div>
+
+                    <!-- Email Field -->
+                    <div class="space-y-2">
+                        <label class="block text-xs font-bold uppercase tracking-widest text-outline pl-1" for="email">Email Address</label>
+                        <div class="relative group">
+                            <input class="w-full bg-surface-container-lowest border-none rounded-xl py-4 px-5 text-on-surface placeholder:text-outline/50 focus:bg-surface-container-high focus:ring-2 focus:ring-primary/40 transition-all duration-300" id="email" placeholder="name@sanctuary.com" type="email" required/>
+                            <span class="absolute right-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline/30 group-focus-within:text-primary transition-colors">mail</span>
+                        </div>
+                    </div>
+
+                    <!-- Password Field -->
+                    <div class="space-y-2">
+                        <label class="block text-xs font-bold uppercase tracking-widest text-outline pl-1" for="password">Password</label>
+                        <div class="relative group">
+                            <input class="w-full bg-surface-container-lowest border-none rounded-xl py-4 px-5 pr-12 text-on-surface placeholder:text-outline/50 focus:bg-surface-container-high focus:ring-2 focus:ring-primary/40 transition-all duration-300" id="password" placeholder="••••••••" type="password" required/>
+                            <button type="button" id="togglePassword" class="absolute right-4 top-1/2 -translate-y-1/2 text-outline/30 hover:text-primary transition-colors">
+                                <span class="material-symbols-outlined" id="eyeIcon">visibility</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Remember Me & Forgot Password -->
+                    <div class="flex items-center justify-between px-1">
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <div class="relative flex items-center">
+                                <input type="checkbox" id="rememberMe" class="peer h-5 w-5 rounded border-outline-variant/30 bg-surface-container-lowest text-primary focus:ring-primary/40 focus:ring-offset-0 transition-all cursor-pointer"/>
+                            </div>
+                            <span class="text-sm font-medium text-on-surface-variant group-hover:text-on-surface transition-colors">Remember Me</span>
+                        </label>
+                        <a href="forgot-password.html" class="text-xs font-bold uppercase tracking-widest text-outline hover:text-primary transition-colors">Forgot?</a>
+                    </div>
+
+                    <!-- CTA Button -->
+                    <div class="pt-4">
+                        <button class="w-full bg-gradient-to-r from-secondary to-secondary-dim hover:to-primary text-on-secondary font-bold py-5 rounded-xl text-lg shadow-lg shadow-secondary/20 hover:shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2" type="submit">
+                            <span>Login</span>
+                            <span class="material-symbols-outlined">login</span>
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Redirect to Signup -->
+                <div class="mt-8 pt-8 border-t border-outline-variant/10 text-center">
+                    <p class="text-on-surface-variant text-sm">
+                        New to Versa? 
+                        <a class="text-primary font-bold hover:text-primary-fixed ml-1 transition-colors" href="register.html">Create Sanctuary</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Global Footer -->
+    <footer class="w-full py-12 border-t border-outline-variant/20 z-10 bg-background">
+        <div class="flex flex-col md:flex-row justify-between items-center px-12 max-w-7xl mx-auto gap-6">
+            <div class="text-lg font-bold text-inverse-surface font-headline tracking-tighter">Versa</div>
+            <p class="font-body text-sm tracking-wide text-outline text-center md:text-left">
+                © 2024 Versa. All rights reserved. Your Radiant Sanctuary.
+            </p>
+            <div class="flex gap-6">
+                <span class="material-symbols-outlined text-outline cursor-pointer hover:text-tertiary transition-colors">share</span>
+                <span class="material-symbols-outlined text-outline cursor-pointer hover:text-tertiary transition-colors">language</span>
+                <span class="material-symbols-outlined text-outline cursor-pointer hover:text-tertiary transition-colors">eco</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const passwordInput = document.getElementById('password');
+        const toggleButton = document.getElementById('togglePassword');
+        const eyeIcon = document.getElementById('eyeIcon');
+
+        toggleButton.addEventListener('click', () => {
+            const isPassword = passwordInput.type === 'password';
+            passwordInput.type = isPassword ? 'text' : 'password';
+            eyeIcon.textContent = isPassword ? 'visibility_off' : 'visibility';
+        });
+
+        const loginForm = document.getElementById('loginForm');
+        const authError = document.getElementById('authError');
+
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            authError.classList.add('hidden');
+            const inputs = loginForm.querySelectorAll('input');
+            inputs.forEach(input => input.classList.remove('input-error'));
+
+            let isValid = true;
+            inputs.forEach(input => {
+                if (!input.value && input.required) {
+                    input.classList.add('input-error');
+                    isValid = false;
+                }
+            });
+
+            if (isValid) {
+                console.log('Login attempt with:', {
+                    email: document.getElementById('email').value,
+                    remember: document.getElementById('rememberMe').checked
+                });
+                alert('Authentication successful! Welcome to your sanctuary.');
+                window.location.href = 'forgot-password.html';
+            }
+        });
+    </script>
+</body>
+</html>

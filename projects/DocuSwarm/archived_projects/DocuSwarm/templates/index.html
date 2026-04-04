@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DocuSwarm API</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <!-- marked.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        .modal { display: none; position: fixed; z-index: 50; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4); }
+        .modal-content { background-color: #fefefe; margin: 15% auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 500px; border-radius: 12px; }
+    </style>
+    <!-- PostHog Analytics -->
+    <script>
+        !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.async=!0,p.src=s.api_host+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="capture identify alias people.set people.set_once set_config register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures onSessionId getSurveys getActiveMatchingSurveys renderSurvey registerAdHocComponent".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1.0)}(document,window.posthog||[]);
+        const phKey = '{{ posthog_key }}';
+        const phHost = '{{ posthog_host }}';
+        if(phKey && typeof window.posthog !== 'undefined') {
+            window.posthog.init?.(phKey, {api_host: phHost});
+        }
+    </script>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans min-h-screen">
+    <div id="clerk-app"></div>
+
+    <!-- Export Modal -->
+    <div id="exportModal" class="modal">
+        <div class="modal-content shadow-2xl border-none">
+            <h3 class="text-xl font-bold mb-4 text-gray-800">Export to GitHub</h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-600 mb-1">Select Repository</label>
+                    <select id="repoSelect" class="w-full border rounded-md p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                        <option>Loading repositories...</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-600 mb-1">File Path</label>
+                    <input type="text" id="filePath" value="README.md" class="w-full border rounded-md p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button id="closeModal" class="text-gray-500 hover:text-gray-700 text-sm font-semibold">Cancel</button>
+                    <button id="confirmExport" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-bold shadow-sm transition">Push to GitHub</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="max-w-6xl mx-auto p-4 md:p-8">
+        <header class="flex flex-col md:flex-row justify-between items-center mb-8 border-b pb-4">
+            <div class="text-left mb-4 md:mb-0">
+                <h1 class="text-4xl font-extrabold text-blue-700 tracking-tight">DocuSwarm Generator</h1>
+                <p class="text-gray-600 mt-1 italic text-sm">Autonomous Documentation Swarm</p>
+            </div>
+            <div class="flex items-center space-x-3">
+                <div id="pro-badge" style="display: none;" class="bg-indigo-100 text-indigo-700 text-xs font-bold px-2 py-1 rounded-full border border-indigo-200">PRO</div>
+                <button id="githubBtn" style="display: none;" class="bg-gray-800 hover:bg-black text-white text-xs md:text-sm font-bold py-2 px-4 rounded-full transition duration-300 shadow-md flex items-center">
+                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                    Connect GitHub
+                </button>
+                <div id="upgrade-section" style="display: none;">
+                    <button id="upgradeBtn" class="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white text-xs md:text-sm font-bold py-2 px-4 rounded-full transition duration-300 shadow-md transform hover:scale-105">
+                        Upgrade to Pro
+                    </button>
+                </div>
+                <div id="portal-section" style="display: none;">
+                    <button id="portalBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs md:text-sm font-bold py-2 px-4 rounded-full transition duration-300 shadow-sm border border-gray-300">
+                        Billing
+                    </button>
+                </div>
+                <div id="login-button-container">
+                    <button id="loginBtn" class="bg-blue-600 hover:bg-blue-700 text-white text-xs md:text-sm font-bold py-2 px-4 rounded-full transition duration-300 shadow-md">Sign In</button>
+                </div>
+                <div id="user-button"></div>
+            </div>
+        </header>
+        
+        <div id="sign-in-box" class="flex justify-center mt-20" style="display: none;"></div>
+
+        <!-- Now visible by default -->
+        <main id="generator-ui" class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <aside class="lg:col-span-1">
+                <div class="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden sticky top-8">
+                    <div class="bg-gray-50 border-b p-4 flex justify-between items-center">
+                        <h3 class="font-bold text-gray-700">Document History</h3>
+                        <button id="refreshHistory" class="text-blue-500 hover:text-blue-700 text-xs">Refresh</button>
+                    </div>
+                    <div id="history-list" class="max-h-[600px] overflow-y-auto p-2 space-y-2">
+                        <p class="text-xs text-gray-400 text-center py-4">Sign in to save history.</p>
+                    </div>
+                </div>
+            </aside>
+
+            <div class="lg:col-span-3 space-y-8">
+                <!-- Multi-File Input Form -->
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label for="language" class="block text-sm font-semibold text-gray-700 mb-2">Programming Language</label>
+                            <input list="languages" id="language" placeholder="Select or type language..." class="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <datalist id="languages">
+                                <option value="Python">
+                                <option value="JavaScript">
+                                <option value="TypeScript">
+                                <option value="Go">
+                                <option value="Rust">
+                                <option value="C++">
+                                <option value="Java">
+                                <option value="PHP">
+                                <option value="Ruby">
+                            </datalist>
+                        </div>
+                        <div>
+                            <label for="template" class="block text-sm font-semibold text-gray-700 mb-2">Documentation Format</label>
+                            <select id="template" class="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+                                <option value="standard">Standard README</option>
+                                <option value="api_reference">API Reference</option>
+                                <option value="tutorial">Step-by-Step Tutorial</option>
+                                <option value="executive_summary">Executive Summary</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="file-inputs" class="space-y-4 mb-6">
+                        <div class="file-block border rounded-lg p-4 bg-gray-50 relative">
+                            <div class="mb-2">
+                                <input type="text" placeholder="File name (e.g., auth.py)" class="file-name w-full border border-gray-300 rounded-md p-2 text-sm focus:ring-1 focus:ring-blue-500 outline-none mb-2">
+                                <textarea rows="4" placeholder="Paste code snippet here..." class="file-content w-full font-mono text-sm border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex space-x-4 mb-6">
+                        <button id="addFileBtn" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-md border border-gray-300 transition duration-200">
+                            + Add Another File
+                        </button>
+                    </div>
+                    
+                    <button id="generateBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-md transition duration-200 shadow-md">
+                        Generate Documentation
+                    </button>
+                </div>
+
+                <div id="errorContainer" class="hidden bg-red-50 border-l-4 border-red-500 p-4 mb-8 rounded-r-md shadow-sm text-sm text-red-700 font-semibold" id="errorMessage"></div>
+
+                <div id="outputContainer" class="hidden bg-white p-8 rounded-xl shadow-lg border border-gray-200 min-h-[400px]">
+                    <div class="flex justify-between items-center mb-6 pb-2 border-b border-gray-200">
+                        <h2 class="text-2xl font-bold text-gray-900">Generated Documentation</h2>
+                        <div class="flex space-x-2">
+                            <button id="exportBtn" style="display: none;" class="text-xs bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded shadow-sm font-bold transition">Export to GitHub</button>
+                            <button id="copyBtn" class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-600 px-3 py-1 rounded border transition">Copy MD</button>
+                        </div>
+                    </div>
+                    <div id="output" class="prose max-w-none prose-blue"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Clerk JS -->
+    <script>
+        let currentUserStatus = { github_connected: false, tier: 'Hobby' };
+        let currentDocContent = "";
+
+        window.startClerk = async () => {
+            await window.Clerk.load();
+            
+            const renderUI = async () => {
+                const signInEl = document.getElementById('sign-in-box');
+                const userButtonEl = document.getElementById('user-button');
+                const generatorUI = document.getElementById('generator-ui');
+                const upgradeSection = document.getElementById('upgrade-section');
+                const portalSection = document.getElementById('portal-section');
+                const proBadge = document.getElementById('pro-badge');
+                const githubBtn = document.getElementById('githubBtn');
+                const loginBtnContainer = document.getElementById('login-button-container');
+
+                generatorUI.style.display = 'grid';
+
+                if (window.Clerk.user) {
+                    loginBtnContainer.style.display = 'none';
+                    if(signInEl) signInEl.style.display = 'none';
+                    if(userButtonEl) window.Clerk.mountUserButton(userButtonEl);
+
+                    window.posthog?.identify?.(window.Clerk.user.id, {
+                        email: window.Clerk.user.primaryEmailAddress.emailAddress
+                    });
+
+                    await fetchUserStatus();
+                    fetchHistory();
+                    
+                    githubBtn.style.display = 'flex';
+                    if (currentUserStatus.tier === 'Pro') {
+                        proBadge.style.display = 'block';
+                        portalSection.style.display = 'block';
+                        upgradeSection.style.display = 'none';
+                    } else {
+                        upgradeSection.style.display = 'block';
+                        proBadge.style.display = 'none';
+                        portalSection.style.display = 'none';
+                    }
+
+                    if (currentUserStatus.github_connected) {
+                        githubBtn.innerHTML = 'GitHub Connected';
+                        githubBtn.classList.replace('bg-gray-800', 'bg-green-600');
+                        document.getElementById('exportBtn').style.display = 'block';
+                    }
+                } else {
+                    loginBtnContainer.style.display = 'block';
+                    githubBtn.style.display = 'none';
+                    upgradeSection.style.display = 'none';
+                    portalSection.style.display = 'none';
+                    proBadge.style.display = 'none';
+                    if(userButtonEl) userButtonEl.innerHTML = '';
+                    document.getElementById('history-list').innerHTML = '<p class="text-xs text-gray-400 text-center py-4">Sign in to save history.</p>';
+                    document.getElementById('exportBtn').style.display = 'none';
+                }
+            };
+
+            window.Clerk.addListener(({ user }) => renderUI());
+            renderUI();
+        };
+
+        async function fetchUserStatus() {
+            const token = await window.Clerk.session.getToken();
+            const res = await fetch('/api/user/status', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            currentUserStatus = await res.json();
+            window.posthog?.people?.set?.({ tier: currentUserStatus.tier });
+        }
+
+        async function fetchHistory() {
+            const token = await window.Clerk.session.getToken();
+            const response = await fetch('/api/documents', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const docs = await response.json();
+            const list = document.getElementById('history-list');
+            
+            if (docs.length === 0) {
+                list.innerHTML = '<p class="text-xs text-gray-400 text-center py-4">No history yet.</p>';
+                return;
+            }
+
+            list.innerHTML = '';
+            docs.forEach(doc => {
+                const item = document.createElement('div');
+                item.className = "p-3 rounded-lg border border-gray-100 hover:bg-blue-50 cursor-pointer transition text-sm group";
+                const date = new Date(doc.created_at).toLocaleDateString();
+                item.innerHTML = `
+                    <div class="font-bold text-gray-700 truncate group-hover:text-blue-700">${doc.prompt.substring(0, 30)}...</div>
+                    <div class="text-[10px] text-gray-400 mt-1">${date}</div>
+                `;
+                item.onclick = () => {
+                    currentDocContent = doc.generated_content;
+                    const outputDiv = document.getElementById('output');
+                    const outputContainer = document.getElementById('outputContainer');
+                    outputDiv.innerHTML = marked.parse(doc.generated_content);
+                    outputContainer.classList.remove('hidden');
+                    window.scrollTo({ top: outputContainer.offsetTop - 20, behavior: 'smooth' });
+                    window.posthog?.capture?.('history_item_viewed');
+                };
+                list.appendChild(item);
+            });
+        }
+    </script>
+    <script async crossorigin="anonymous" data-clerk-publishable-key="{{ clerk_publishable_key }}" src="https://{{ clerk_domain }}/npm/@clerk/clerk-js@latest/dist/clerk.browser.js" onload="window.startClerk()"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const generateBtn = document.getElementById('generateBtn');
+            const upgradeBtn = document.getElementById('upgradeBtn');
+            const portalBtn = document.getElementById('portalBtn');
+            const githubBtn = document.getElementById('githubBtn');
+            const exportBtn = document.getElementById('exportBtn');
+            const loginBtn = document.getElementById('loginBtn');
+            const confirmExport = document.getElementById('confirmExport');
+            const repoSelect = document.getElementById('repoSelect');
+            const filePath = document.getElementById('filePath');
+            const modal = document.getElementById('exportModal');
+            const addFileBtn = document.getElementById('addFileBtn');
+            const fileInputsContainer = document.getElementById('file-inputs');
+            const templateSelect = document.getElementById('template');
+
+            loginBtn.onclick = () => window.Clerk.openSignIn();
+
+            // Handle Multi-File Input UI
+            addFileBtn.addEventListener('click', () => {
+                const block = document.createElement('div');
+                block.className = "file-block border rounded-lg p-4 bg-gray-50 relative mt-4";
+                block.innerHTML = `
+                    <button class="remove-file absolute top-2 right-2 text-red-500 text-xs font-bold hover:text-red-700">Remove</button>
+                    <div class="mb-2">
+                        <input type="text" placeholder="File name (e.g., auth.py)" class="file-name w-full border border-gray-300 rounded-md p-2 text-sm focus:ring-1 focus:ring-blue-500 outline-none mb-2">
+                        <textarea rows="4" placeholder="Paste code snippet here..." class="file-content w-full font-mono text-sm border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                    </div>
+                `;
+                fileInputsContainer.appendChild(block);
+                block.querySelector('.remove-file').onclick = () => block.remove();
+                window.posthog?.capture?.('file_block_added');
+            });
+
+            // Handle GitHub Auth
+            githubBtn.addEventListener('click', async () => {
+                if (currentUserStatus.github_connected) return;
+                window.posthog?.capture?.('github_auth_initiated');
+                const token = await window.Clerk.session.getToken();
+                const res = await fetch('/api/auth/github', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                if (data.url) window.location.href = data.url;
+            });
+
+            // Handle Export Modal
+            exportBtn.addEventListener('click', async () => {
+                modal.style.display = 'block';
+                const token = await window.Clerk.session.getToken();
+                const res = await fetch('/api/github/repos', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const repos = await res.json();
+                repoSelect.innerHTML = repos.map(r => `<option value="${r.full_name}">${r.full_name}</option>`).join('');
+            });
+
+            document.getElementById('closeModal').onclick = () => modal.style.display = 'none';
+
+            confirmExport.addEventListener('click', async () => {
+                confirmExport.innerText = 'Pushing...';
+                confirmExport.disabled = true;
+                const token = await window.Clerk.session.getToken();
+                const res = await fetch('/api/export/github', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}` 
+                    },
+                    body: JSON.stringify({
+                        repo: repoSelect.value,
+                        path: filePath.value,
+                        content: currentDocContent
+                    })
+                });
+                const result = await res.json();
+                if (result.success) {
+                    alert('Successfully exported to GitHub!');
+                    modal.style.display = 'none';
+                    window.posthog?.capture?.('github_export_confirmed', { repo: repoSelect.value });
+                } else {
+                    alert('Export failed: ' + result.error);
+                }
+                confirmExport.innerText = 'Push to GitHub';
+                confirmExport.disabled = false;
+            });
+
+            generateBtn.addEventListener('click', async () => {
+                const lang = document.getElementById('language').value.trim();
+                const template = templateSelect.value;
+                
+                const fileBlocks = document.querySelectorAll('.file-block');
+                const files = [];
+                fileBlocks.forEach(block => {
+                    const name = block.querySelector('.file-name').value.trim();
+                    const content = block.querySelector('.file-content').value.trim();
+                    if (content) files.push({ name: name || 'unnamed_file', content });
+                });
+
+                if (files.length === 0) return alert('Please enter at least one code snippet.');
+
+                let headers = { 'Content-Type': 'application/json' };
+                
+                // Handle Authorization
+                if (window.Clerk.user) {
+                    const token = await window.Clerk.session.getToken();
+                    headers['Authorization'] = `Bearer ${token}`;
+                } else {
+                    let anonCount = parseInt(localStorage.getItem('docu_anon_usage') || '0');
+                    if (anonCount >= 5) {
+                        alert('Anonymous quota reached (5/5). Please sign in to continue for free!');
+                        window.Clerk.openSignIn();
+                        return;
+                    }
+                    localStorage.setItem('docu_anon_usage', (anonCount + 1).toString());
+                }
+
+                window.posthog?.capture?.('generation_started', { template, language: lang, authenticated: !!window.Clerk.user });
+
+                generateBtn.innerText = 'Generating...';
+                generateBtn.disabled = true;
+
+                try {
+                    const response = await fetch('/api/v1/generate-docs', {
+                        method: 'POST',
+                        headers: headers,
+                        body: JSON.stringify({ files, language: lang || 'unknown', template })
+                    });
+                    const data = await response.json();
+                    if (!response.ok) {
+                        alert(data.error || 'Generation failed.');
+                        window.posthog?.capture?.('generation_failed', { error: data.error });
+                    } else {
+                        currentDocContent = data.documentation;
+                        document.getElementById('output').innerHTML = marked.parse(data.documentation);
+                        document.getElementById('outputContainer').classList.remove('hidden');
+                        if (window.Clerk.user) fetchHistory();
+                        window.posthog?.capture?.('generation_success');
+                    }
+                } finally {
+                    generateBtn.innerText = 'Generate Documentation';
+                    generateBtn.disabled = false;
+                }
+            });
+
+            // Handle Upgrade/Portal
+            upgradeBtn.onclick = async () => {
+                try {
+                    window.posthog?.capture?.('upgrade_clicked');
+                    const token = await window.Clerk.session.getToken();
+                    const res = await fetch('/api/create-checkout-session', { method: 'POST', headers: { 'Authorization': `Bearer ${token}` } });
+                    const d = await res.json(); 
+                    if (d.url) {
+                        window.location.href = d.url;
+                    } else if (d.error) {
+                        alert("Upgrade Error: " + d.error);
+                    } else {
+                        alert("An unexpected error occurred during upgrade.");
+                    }
+                } catch (err) {
+                    alert("Network Error: " + err.message);
+                }
+            };
+            portalBtn.onclick = async () => {
+                try {
+                    window.posthog?.capture?.('billing_portal_clicked');
+                    const token = await window.Clerk.session.getToken();
+                    const res = await fetch('/api/create-portal-session', { method: 'POST', headers: { 'Authorization': `Bearer ${token}` } });
+                    const d = await res.json(); 
+                    if (d.url) {
+                        window.location.href = d.url;
+                    } else if (d.error) {
+                        alert("Billing Portal Error: " + d.error);
+                    } else {
+                        alert("An unexpected error occurred accessing the portal.");
+                    }
+                } catch (err) {
+                    alert("Network Error: " + err.message);
+                }
+            };
+
+            // Analytics check
+            const urlP = new URLSearchParams(window.location.search);
+            if (urlP.get('success') === 'true') {
+                window.posthog?.capture?.('checkout_success');
+            } else if (urlP.get('canceled') === 'true') {
+                window.posthog?.capture?.('checkout_canceled');
+            }
+        });
+    </script>
+</body>
+</html>

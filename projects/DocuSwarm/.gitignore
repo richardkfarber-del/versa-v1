@@ -1,0 +1,4 @@
+.env
+swarm.db
+venv/
+__pycache__/

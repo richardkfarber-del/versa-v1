@@ -1,0 +1,2 @@
+127.0.0.1 - - [28/Mar/2026 02:30:16] "HEAD /index.html HTTP/1.1" 200 -
+127.0.0.1 - - [28/Mar/2026 03:21:13] "GET /static/templates/compass.html HTTP/1.1" 200 -
