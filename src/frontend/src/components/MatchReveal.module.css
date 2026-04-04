@@ -1,0 +1,11 @@
+/* MatchReveal.module.css */
+.container {
+  background-color: #0c141f; /* Midnight background */
+  color: #75bfe2; /* Jewel tone text color */
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.matchItem {
+  margin: 5px 0;
+}

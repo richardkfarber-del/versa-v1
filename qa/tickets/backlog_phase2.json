@@ -1,0 +1,26 @@
+[
+  {
+    "ticket_id": "TICKET-001",
+    "title": "Horizontal Scalability Limit",
+    "description": "The in-memory `sessions = new Map()` restricts the application to a single Node.js instance. Scaling horizontally will require a pub/sub mechanism (e.g., Redis) to sync WebSocket states across multiple instances.",
+    "status": "todo",
+    "priority": "high",
+    "file_path": "TICKET-001_horizontal_scalability.md"
+  },
+  {
+    "ticket_id": "TICKET-002",
+    "title": "DDoS / Resource Exhaustion",
+    "description": "Without strict rate-limiting and connection timeouts, malicious actors could flood the server with empty WebSocket connections, eventually exhausting the Node instance's memory limit.",
+    "status": "todo",
+    "priority": "high",
+    "file_path": "TICKET-002_ddos_exhaustion.md"
+  },
+  {
+    "ticket_id": "TICKET-003",
+    "title": "Orphaned Sessions",
+    "description": "Ensure the WebSocket `on('close')` event aggressively sweeps the `sessions` Map to prevent memory leaks from dropped mobile connections.",
+    "status": "todo",
+    "priority": "medium",
+    "file_path": "TICKET-003_orphaned_sessions.md"
+  }
+]

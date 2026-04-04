@@ -5,7 +5,7 @@ description: "Deterministic pipeline for UI components, bypassing orchestrator A
 stages:
   - name: "requirements_definition"
     agent: "oracle"
-    model: "google/gemini-3-pro"
+    model: "google/gemini-2.5-pro"
     instruction: "Read the target feature request, generate a strict technical PRD, and explicitly log the saved PRD file path to the console."
     next_stage: "architecture_scaffolding"
 
@@ -51,6 +51,6 @@ stages:
 
   - name: "finalize"
     agent: "alfred"
-    model: "google/gemini-3-pro"
+    model: "google/gemini-2.5-pro"
     instruction: "Log the finalized file path to the master session tracker and notify the user that the pipeline has completed."
     end_pipeline: true
