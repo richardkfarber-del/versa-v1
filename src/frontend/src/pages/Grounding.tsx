@@ -47,7 +47,7 @@ const Grounding: React.FC = () => {
           table: 'active_sessions',
           filter: `pairing_id=eq.${pairingId}`
         },
-        (payload) => {
+        (payload: any) => {
           if (payload.new.session_status === 'Timer_Active') {
             navigate('/date');
           }

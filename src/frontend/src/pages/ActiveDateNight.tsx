@@ -73,7 +73,7 @@ const ActiveDateNight: React.FC = () => {
           table: 'active_sessions',
           filter: `pairing_id=eq.${pairingId}`
         },
-        (payload) => {
+        (payload: any) => {
           const { timer_countdown, session_status, active_script_id } = payload.new;
           setTimeLeft(timer_countdown);
           setIsPaused(session_status === 'Paused');

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-pointer-router'; // Actually react-router-dom
-import { useNavigate as useDomNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../api';
 
 interface Match {
@@ -20,14 +19,14 @@ interface Product {
 }
 
 const MatchReveal: React.FC = () => {
-  const navigate = useDomNavigate();
-  const [matches, setMatches] = useState<Match[]>([
+  const navigate = useNavigate();
+  const [matches] = useState<Match[]>([
     { category: 'Deep Conversation', description: 'Explore the unsaid with guided prompts for intimacy.', icon: 'forum', color: 'secondary' },
     { category: '15-Minute Massage', description: 'A gentle tactile exchange to release physical tension.', icon: 'self_care', color: 'primary' },
     { category: 'Slow Breathwork', description: 'Synchronized breathing to align your nervous systems.', icon: 'air', color: 'tertiary' }
   ]);
   const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
   
   // Vibe Check drawer states
   const [showVibeCheck, setShowVibeCheck] = useState(false);
