@@ -162,8 +162,13 @@ const ActiveDateNight: React.FC = () => {
       </div>
 
       <header className="fixed top-0 z-50 w-full px-6 py-4 flex justify-between items-center bg-transparent backdrop-blur-xl bg-opacity-80">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <button onClick={() => navigate('/match')} className="material-symbols-outlined text-[#f183ff] text-2xl hover:opacity-80">arrow_back</button>
+          <img 
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrvmj9fE8wymT5lgT3LS-1I4tErKwpKlcZZuBgCtk4uUqeqJUROyAn248BClzDQ4WiWQNsUuKA0ARQj5N1rlYYBIBTJFlbVQOgKk7ssUajQdcgft3WfNInH_cstvFo8Z1t736NVFdm33kSYq3d8aCaFb2HpGR8Y4DSf5Xfjcxjom-cP04c0gupbVoRMpRPIwQGKcVlElt1TdH9ZrHLHnB0hWT7XO4qntCiX9borKuvuxlTIfWS03Qee_G58IWo0ZPhlTmh7FsypTg" 
+            alt="Versa Logo" 
+            className="w-7 h-7"
+          />
           <span className="text-xl font-bold tracking-tighter font-headline text-slate-200">
             {itinerary ? itinerary.title : "Active Practice"}
           </span>

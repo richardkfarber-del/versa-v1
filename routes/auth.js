@@ -36,7 +36,7 @@ router.post('/register', (req, res) => {
     res.status(201).json({
       success: true,
       token,
-      user: { id: userId, email: email.toLowerCase() }
+      user: { id: userId, email: email.toLowerCase(), hasCompassAnswers: false }
     });
   } catch (error) {
     console.error('Registration failed:', error.message);
@@ -70,7 +70,7 @@ router.post('/login', (req, res) => {
     res.json({
       success: true,
       token,
-      user: { id: user.id, email: user.email, tonePreference: user.tone_preference }
+      user: { id: user.id, email: user.email, tonePreference: user.tone_preference, hasCompassAnswers: !!user.compass_answers }
     });
   } catch (error) {
     console.error('Login failed:', error.message);

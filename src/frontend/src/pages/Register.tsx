@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { submitRegistration } from '../api';
+import { submitRegistration, submitLogin } from '../api';
 
 const Register: React.FC = () => {
+  const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -10,25 +11,45 @@ const Register: React.FC = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleRegister = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
-    if (password !== confirmPassword) {
+    if (!isLogin && password !== confirmPassword) {
       setError('Passwords do not match');
       return;
     }
 
     setLoading(true);
     try {
-      const result = await submitRegistration(email, password);
-      if (result) {
-        // Save user ID to local storage or context (mocking this)
-        localStorage.setItem('versa_user_id', 'partnerA_123'); 
-        navigate('/compass'); // Redirect to next step
+      if (isLogin) {
+        const result: any = await submitLogin(email, password);
+        if (result && result.success) {
+          localStorage.setItem('versa_token', result.token);
+          localStorage.setItem('versa_user_id', result.user.id);
+          
+          // If user has a pairing ID, store it
+          if (result.user.pairingId) {
+            localStorage.setItem('versa_pairing_id', result.user.pairingId);
+          }
+
+          // Smart Redirect: If onboarding completed, go to match dashboard, otherwise to compass
+          if (result.user.hasCompassAnswers) {
+            navigate('/match');
+          } else {
+            navigate('/compass');
+          }
+        }
+      } else {
+        const result: any = await submitRegistration(email, password);
+        if (result && result.success) {
+          localStorage.setItem('versa_token', result.token);
+          localStorage.setItem('versa_user_id', result.user.id);
+          navigate('/compass');
+        }
       }
     } catch (err: any) {
-      setError(err.message || 'Failed to register');
+      setError(err.message || 'Failed to authenticate');
     } finally {
       setLoading(false);
     }
@@ -51,20 +72,21 @@ const Register: React.FC = () => {
       <main className="relative z-10 flex-grow flex items-center justify-center p-6">
         <div className="w-full max-w-[480px]">
           <div className="text-center mb-10">
+            {/* The brand infinity logo */}
             <img
               alt="Versa Logo"
-              className="h-12 mx-auto mb-6 drop-shadow-2xl"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBD0VT1UYovlWGYaSrfsfbi_pUjIK093EyV-v7G-RFghKm1s7pcDibMVsM_BpC50SVoIMMHyrax6xaTkVxfmRN8SXmfgqUTtMLIauRxKqkkrb0NRXlG8cUW0bD1dLB5uEwgxJjR1oQWlj-Y2VuXYfiHrJoFBpeL9E2ut_uHFSh8zxhDTljyhitl6KE1tp7I2becu5rPc13UybEG4lse0RbaiUkIuETlC7MNR5Jkmm3HpWMDVYV0dIQMkEuJRRzqhH4rt3XGfM54XmY"
+              className="h-16 mx-auto mb-4 drop-shadow-2xl"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrvmj9fE8wymT5lgT3LS-1I4tErKwpKlcZZuBgCtk4uUqeqJUROyAn248BClzDQ4WiWQNsUuKA0ARQj5N1rlYYBIBTJFlbVQOgKk7ssUajQdcgft3WfNInH_cstvFo8Z1t736NVFdm33kSYq3d8aCaFb2HpGR8Y4DSf5Xfjcxjom-cP04c0gupbVoRMpRPIwQGKcVlElt1TdH9ZrHLHnB0hWT7XO4qntCiX9borKuvuxlTIfWS03Qee_G58IWo0ZPhlTmh7FsypTg"
             />
           </div>
 
           <div className="bg-surface-container-low/80 backdrop-blur-2xl rounded-[2.75rem] p-10 md:p-12 shadow-2xl border border-outline-variant/10">
             <div className="mb-10 text-center">
               <h1 className="font-headline text-3xl md:text-4xl font-extrabold tracking-tight text-on-background mb-3 glow-text">
-                Create Your Sanctuary
+                {isLogin ? 'Welcome Back' : 'Create Your Sanctuary'}
               </h1>
               <p className="text-on-surface-variant font-medium tracking-wide">
-                Begin your journey to radiant well-being.
+                {isLogin ? 'Sign in to access your sanctuary.' : 'Begin your journey to radiant connection.'}
               </p>
             </div>
 
@@ -74,7 +96,7 @@ const Register: React.FC = () => {
               </div>
             )}
 
-            <form className="space-y-6" onSubmit={handleRegister}>
+            <form className="space-y-6" onSubmit={handleSubmit}>
               <div className="space-y-2">
                 <label className="block text-xs font-bold uppercase tracking-widest text-outline pl-1" htmlFor="email">
                   Email Address
@@ -115,25 +137,27 @@ const Register: React.FC = () => {
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <label className="block text-xs font-bold uppercase tracking-widest text-outline pl-1" htmlFor="confirm-password">
-                  Confirm Password
-                </label>
-                <div className="relative group">
-                  <input
-                    className="w-full bg-surface-container-lowest border-none rounded-xl py-4 px-5 text-on-surface placeholder:text-outline/50 focus:ring-2 focus:ring-primary/40 transition-all duration-300"
-                    id="confirm-password"
-                    placeholder="••••••••"
-                    type="password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    required
-                  />
-                  <span className="absolute right-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline/30 group-focus-within:text-primary transition-colors">
-                    verified_user
-                  </span>
+              {!isLogin && (
+                <div className="space-y-2">
+                  <label className="block text-xs font-bold uppercase tracking-widest text-outline pl-1" htmlFor="confirm-password">
+                    Confirm Password
+                  </label>
+                  <div className="relative group">
+                    <input
+                      className="w-full bg-surface-container-lowest border-none rounded-xl py-4 px-5 text-on-surface placeholder:text-outline/50 focus:ring-2 focus:ring-primary/40 transition-all duration-300"
+                      id="confirm-password"
+                      placeholder="••••••••"
+                      type="password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      required
+                    />
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline/30 group-focus-within:text-primary transition-colors">
+                      verified_user
+                    </span>
+                  </div>
                 </div>
-              </div>
+              )}
 
               <div className="pt-4">
                 <button
@@ -141,7 +165,7 @@ const Register: React.FC = () => {
                   type="submit"
                   disabled={loading}
                 >
-                  <span>{loading ? 'Creating Sanctuary...' : 'Sign Up'}</span>
+                  <span>{loading ? 'Processing...' : isLogin ? 'Sign In' : 'Sign Up'}</span>
                   {!loading && <span className="material-symbols-outlined">arrow_forward</span>}
                 </button>
               </div>
@@ -154,10 +178,13 @@ const Register: React.FC = () => {
 
             <div className="mt-8 pt-8 border-t border-outline-variant/10 text-center">
               <p className="text-on-surface-variant text-sm">
-                Already have an account?
-                <a className="text-primary font-bold hover:text-primary-fixed ml-1 transition-colors" href="#">
-                  Sign In
-                </a>
+                {isLogin ? "Don't have an account?" : "Already have an account?"}
+                <button 
+                  onClick={() => setIsLogin(!isLogin)}
+                  className="text-primary font-bold hover:text-primary-fixed ml-1 transition-colors focus:outline-none"
+                >
+                  {isLogin ? 'Sign Up' : 'Sign In'}
+                </button>
               </p>
             </div>
           </div>

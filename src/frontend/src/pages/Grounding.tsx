@@ -108,7 +108,12 @@ const Grounding: React.FC = () => {
   return (
     <div className="bg-surface text-on-surface font-body selection:bg-tertiary/30 overflow-hidden h-screen w-screen flex flex-col relative antialiased select-none">
       <header className="bg-transparent docked full-width top-0 z-50 flex justify-between items-center w-full px-6 py-8">
-        <div className="flex items-center">
+        <div className="flex items-center gap-2">
+          <img 
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrvmj9fE8wymT5lgT3LS-1I4tErKwpKlcZZuBgCtk4uUqeqJUROyAn248BClzDQ4WiWQNsUuKA0ARQj5N1rlYYBIBTJFlbVQOgKk7ssUajQdcgft3WfNInH_cstvFo8Z1t736NVFdm33kSYq3d8aCaFb2HpGR8Y4DSf5Xfjcxjom-cP04c0gupbVoRMpRPIwQGKcVlElt1TdH9ZrHLHnB0hWT7XO4qntCiX9borKuvuxlTIfWS03Qee_G58IWo0ZPhlTmh7FsypTg" 
+            alt="Versa Logo" 
+            className="w-7 h-7"
+          />
           <span className="font-headline font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary-container text-xl tracking-tight">
             Versa
           </span>

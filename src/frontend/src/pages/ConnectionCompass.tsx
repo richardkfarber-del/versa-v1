@@ -166,15 +166,22 @@ const ConnectionCompass: React.FC = () => {
             <span className="material-symbols-outlined text-2xl">arrow_back</span>
           </button>
           
-          <div className="flex flex-col items-center justify-center">
-            <h1 className="font-headline font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary-container text-xl tracking-tight">
-              Versa
-            </h1>
-            <div className="flex items-center gap-1.5 mt-0.5">
-              <div className="w-2 h-2 rounded-full bg-tertiary animate-pulse shadow-[0_0_8px_rgba(184,255,187,0.6)]"></div>
-              <span className="text-[0.65rem] font-medium text-tertiary/90 uppercase tracking-widest font-label">
-                AI Concierge Active
-              </span>
+          <div className="flex items-center justify-center gap-2">
+            <img 
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrvmj9fE8wymT5lgT3LS-1I4tErKwpKlcZZuBgCtk4uUqeqJUROyAn248BClzDQ4WiWQNsUuKA0ARQj5N1rlYYBIBTJFlbVQOgKk7ssUajQdcgft3WfNInH_cstvFo8Z1t736NVFdm33kSYq3d8aCaFb2HpGR8Y4DSf5Xfjcxjom-cP04c0gupbVoRMpRPIwQGKcVlElt1TdH9ZrHLHnB0hWT7XO4qntCiX9borKuvuxlTIfWS03Qee_G58IWo0ZPhlTmh7FsypTg" 
+              alt="Versa Logo" 
+              className="w-7 h-7"
+            />
+            <div className="flex flex-col items-start justify-center">
+              <h1 className="font-headline font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary-container text-xl tracking-tight leading-none">
+                Versa
+              </h1>
+              <div className="flex items-center gap-1 mt-0.5">
+                <div className="w-1.5 h-1.5 rounded-full bg-tertiary animate-pulse shadow-[0_0_6px_rgba(184,255,187,0.6)]"></div>
+                <span className="text-[0.55rem] font-medium text-tertiary/90 uppercase tracking-widest font-label">
+                  AI Concierge Active
+                </span>
+              </div>
             </div>
           </div>
 

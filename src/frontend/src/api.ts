@@ -13,11 +13,29 @@ export interface Match {
 }
 
 export const submitRegistration = async (email: string, password: string) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({ success: true, message: 'Registration successful', userId: 'user-' + Date.now(), email: email, passwordLength: password.length });
-    }, 1000);
+  const response = await fetch(`${API_BASE_URL}/v1/auth/register`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password })
   });
+  if (!response.ok) {
+    const errData = await response.json().catch(() => ({}));
+    throw new Error(errData.error || 'Registration failed');
+  }
+  return response.json();
+};
+
+export const submitLogin = async (email: string, password: string) => {
+  const response = await fetch(`${API_BASE_URL}/v1/auth/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password })
+  });
+  if (!response.ok) {
+    const errData = await response.json().catch(() => ({}));
+    throw new Error(errData.error || 'Login failed');
+  }
+  return response.json();
 };
 
 export const submitQuizAnswers = async (partnerId: string, answers: Answer[]) => {

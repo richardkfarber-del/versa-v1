@@ -145,9 +145,16 @@ const MatchReveal: React.FC = () => {
           <button className="text-primary hover:opacity-80 transition-opacity active:scale-95 duration-200">
             <span className="material-symbols-outlined">menu</span>
           </button>
-          <h1 className="font-headline font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary-container text-xl tracking-tight">
-            Versa
-          </h1>
+          <div className="flex items-center gap-2">
+            <img 
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrvmj9fE8wymT5lgT3LS-1I4tErKwpKlcZZuBgCtk4uUqeqJUROyAn248BClzDQ4WiWQNsUuKA0ARQj5N1rlYYBIBTJFlbVQOgKk7ssUajQdcgft3WfNInH_cstvFo8Z1t736NVFdm33kSYq3d8aCaFb2HpGR8Y4DSf5Xfjcxjom-cP04c0gupbVoRMpRPIwQGKcVlElt1TdH9ZrHLHnB0hWT7XO4qntCiX9borKuvuxlTIfWS03Qee_G58IWo0ZPhlTmh7FsypTg" 
+              alt="Versa Logo" 
+              className="w-7 h-7"
+            />
+            <h1 className="font-headline font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary-container text-xl tracking-tight">
+              Versa
+            </h1>
+          </div>
           <button 
             onClick={() => navigate('/compass')}
             className="w-8 h-8 rounded-full overflow-hidden border border-outline-variant/20 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors"
