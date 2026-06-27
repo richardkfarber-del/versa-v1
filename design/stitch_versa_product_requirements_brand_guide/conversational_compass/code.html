@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Versa - The Conversational Compass</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&amp;family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-bright": "#2c2c2c",
+                        "tertiary-container": "#5cfd80",
+                        "inverse-primary": "#9b26af",
+                        "on-secondary": "#4a2800",
+                        "on-primary-container": "#41004c",
+                        "surface-container-low": "#131313",
+                        "on-secondary-fixed": "#4f2c00",
+                        "on-background": "#ffffff",
+                        "primary-container": "#e770f8",
+                        "error-container": "#a70138",
+                        "surface-container-highest": "#262626",
+                        "on-secondary-container": "#fff6f1",
+                        "inverse-on-surface": "#565555",
+                        "on-primary-fixed-variant": "#540062",
+                        "secondary": "#ff9800",
+                        "on-tertiary-fixed-variant": "#006827",
+                        "tertiary": "#b8ffbb",
+                        "tertiary-fixed-dim": "#4bee74",
+                        "on-primary": "#540062",
+                        "on-error": "#490013",
+                        "outline-variant": "#484847",
+                        "secondary-dim": "#ec8c00",
+                        "on-tertiary-container": "#005d22",
+                        "tertiary-dim": "#4bee74",
+                        "tertiary-fixed": "#5cfd80",
+                        "inverse-surface": "#fcf9f8",
+                        "secondary-fixed": "#ffc791",
+                        "primary": "#f183ff",
+                        "on-error-container": "#ffb2b9",
+                        "surface-container-high": "#201f1f",
+                        "on-tertiary-fixed": "#004819",
+                        "outline": "#767575",
+                        "on-surface": "#ffffff",
+                        "on-surface-variant": "#adaaaa",
+                        "error-dim": "#d73357",
+                        "surface-variant": "#262626",
+                        "on-primary-fixed": "#010002",
+                        "surface": "#0e0e0e",
+                        "primary-fixed": "#ea73fb",
+                        "secondary-container": "#8b5000",
+                        "secondary-fixed-dim": "#ffb467",
+                        "primary-fixed-dim": "#db65ec",
+                        "on-secondary-fixed-variant": "#774400",
+                        "primary-dim": "#e46df5",
+                        "on-tertiary": "#006727",
+                        "surface-container": "#1a1919",
+                        "error": "#ff6e84",
+                        "background": "#0e0e0e",
+                        "surface-dim": "#0e0e0e",
+                        "surface-container-lowest": "#000000",
+                        "surface-tint": "#f183ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {},
+                    "fontFamily": {
+                        "headline": ["Manrope", "sans-serif"],
+                        "display": ["Manrope", "sans-serif"],
+                        "body": ["Plus Jakarta Sans", "sans-serif"],
+                        "label": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    "fontSize": {}
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .filled-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+        
+        /* Hide scrollbar for chat area but keep functionality */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+
+        /* Ambient Glow Pulse */
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.1); }
+        }
+        .pulse-active {
+            animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        /* Typing Dots Animation */
+        @keyframes typing-dot {
+            0%, 20% { transform: translateY(0); opacity: 0.5; }
+            50% { transform: translateY(-4px); opacity: 1; }
+            80%, 100% { transform: translateY(0); opacity: 0.5; }
+        }
+        .dot-1 { animation: typing-dot 1.4s infinite ease-in-out both; }
+        .dot-2 { animation: typing-dot 1.4s infinite ease-in-out both; animation-delay: 0.2s; }
+        .dot-3 { animation: typing-dot 1.4s infinite ease-in-out both; animation-delay: 0.4s; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface font-body h-screen w-full flex flex-col relative overflow-hidden antialiased">
+<!-- Ambient Shader Background -->
+<div class="absolute inset-0 z-0 opacity-40 mix-blend-screen pointer-events-none">
+
+</div>
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-surface/80 dark:bg-surface/80 backdrop-blur-xl shadow-none">
+<div class="flex items-center justify-between px-6 h-16 w-full max-w-none">
+<!-- Leading Icon -->
+<button aria-label="Menu" class="text-primary hover:opacity-80 transition-opacity active:scale-95 duration-200 focus:outline-none">
+<span class="material-symbols-outlined text-2xl">menu</span>
+</button>
+<!-- Headline / Brand -->
+<div class="flex flex-col items-center justify-center">
+<h1 class="font-headline text-headline-sm tracking-tight font-headline font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary-container text-xl">
+                    Versa
+                </h1>
+<!-- Active Pulse Indicator -->
+<div class="flex items-center gap-1.5 mt-0.5">
+<div class="w-2 h-2 rounded-full bg-tertiary pulse-active shadow-[0_0_8px_rgba(184,255,187,0.6)]"></div>
+<span class="text-[0.65rem] font-medium text-tertiary/90 uppercase tracking-widest font-label">AI Concierge Active</span>
+</div>
+</div>
+<!-- Trailing Avatar -->
+<button aria-label="User profile" class="text-primary hover:opacity-80 transition-opacity active:scale-95 duration-200 focus:outline-none w-8 h-8 rounded-full overflow-hidden border border-outline-variant/20">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="A close-up, high-fashion portrait of a young woman with glowing, ethereal lighting against a dark midnight background. She has soft features and calm expression, illuminated by subtle magenta and emerald reflections. The aesthetic is modern, luxurious, and cinematic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAUbPPSouEGClQkyb-XK4Z29oDuIe9ZUM-PYpChMDPOYUikfudYbjvP1QI9FEW9C-MsnpVgGkwpiANa3nsTgN2CDN1rIrD8V_eJNaKgPf3rkuU5_vQCYSTz7o8c5Hw33VoZHutx63ugxoerhGMXeMHI3C-u3uXgw2rBog2oWkwJSuGprS-hhBV_Z_8_CDoeclqQEE_WvFSc4fHMECpw7tl98hrHSsPpyDD9lBMcyfnu6dQh-89pj1j2wB9UZeF0EKBg4qI1p8AG_-8"/>
+</button>
+</div>
+</header>
+<!-- Chat Content Canvas -->
+<main class="flex-1 overflow-y-auto no-scrollbar pt-20 pb-40 px-6 z-10 relative flex flex-col justify-end space-y-8" id="chat-container">
+<!-- Welcome / Context Date -->
+<div class="text-center w-full my-4">
+<span class="text-xs font-label text-on-surface-variant/50 uppercase tracking-widest">Today, Sanctuary Session</span>
+</div>
+<!-- AI Message 1 (Intro) -->
+<div class="flex w-full items-start space-x-3 max-w-[85%]">
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center flex-shrink-0 shadow-[0_4px_12px_rgba(241,131,255,0.15)] overflow-hidden">
+<span class="material-symbols-outlined text-primary text-sm filled-icon">auto_awesome</span>
+</div>
+<div class="flex flex-col space-y-1">
+<span class="text-[0.65rem] font-label text-on-surface-variant/70 ml-1">Versa Guide</span>
+<div class="bg-surface-container-low text-on-surface text-sm md:text-base p-4 rounded-2xl rounded-tl-sm border border-outline-variant/10 leading-relaxed shadow-lg backdrop-blur-sm relative overflow-hidden group">
+<!-- Subtle inner glow on bubble -->
+<div class="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none opacity-50"></div>
+<p>Welcome back to your sanctuary. I noticed you spent some time in the privacy vault yesterday.</p>
+</div>
+</div>
+</div>
+<!-- AI Message 2 (Trauma-Informed Question) -->
+<div class="flex w-full items-start space-x-3 max-w-[85%]">
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center flex-shrink-0 shadow-[0_4px_12px_rgba(241,131,255,0.15)] overflow-hidden">
+<span class="material-symbols-outlined text-primary text-sm filled-icon">spa</span>
+</div>
+<div class="flex flex-col space-y-1">
+<span class="text-[0.65rem] font-label text-on-surface-variant/70 ml-1">Versa Guide</span>
+<div class="bg-surface-container-low text-on-surface text-sm md:text-base p-4 rounded-2xl rounded-tl-sm border border-outline-variant/10 leading-relaxed shadow-lg backdrop-blur-sm relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-br from-tertiary/5 to-transparent pointer-events-none opacity-50"></div>
+<p>We can explore those thoughts further if you feel ready, or we can focus on grounding exercises for today. What feels safest for you right now?</p>
+</div>
+</div>
+</div>
+<!-- User Message (Simulation) -->
+<div class="flex w-full items-start justify-end space-x-3 mt-8">
+<div class="flex flex-col space-y-1 items-end max-w-[85%]">
+<div class="bg-surface-container-high text-on-surface text-sm md:text-base p-4 rounded-2xl rounded-tr-sm border border-outline-variant/10 leading-relaxed shadow-lg backdrop-blur-sm relative overflow-hidden">
+<p>I think I need a moment to ground myself first.</p>
+</div>
+</div>
+</div>
+<!-- AI Typing Indicator -->
+<div class="flex w-full items-start space-x-3 max-w-[85%] mt-6 opacity-80 transition-opacity duration-300" id="typing-indicator">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center flex-shrink-0 overflow-hidden">
+<span class="material-symbols-outlined text-on-surface-variant text-sm">more_horiz</span>
+</div>
+<div class="flex flex-col space-y-1 justify-center">
+<span class="text-[0.65rem] font-label text-on-surface-variant/50 ml-1">AI is listening...</span>
+<div class="bg-surface-container-low p-3 rounded-2xl rounded-tl-sm w-16 h-10 flex items-center justify-center space-x-1.5 border border-outline-variant/5">
+<div class="w-1.5 h-1.5 rounded-full bg-primary/60 dot-1"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-primary/60 dot-2"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-primary/60 dot-3"></div>
+</div>
+</div>
+</div>
+<!-- Spacer to ensure content doesn't get hidden behind input area -->
+<div class="h-12"></div>
+</main>
+<!-- Fixed Bottom Input Area -->
+<div class="fixed bottom-0 w-full z-40 bg-gradient-to-t from-surface via-surface/95 to-transparent pt-12 pb-6 px-4">
+<!-- Floating Quick Reply Tags -->
+<div class="flex flex-wrap gap-2 mb-4 justify-start overflow-x-auto no-scrollbar pb-2 pl-2">
+<button class="bg-surface-container-highest/80 backdrop-blur-md text-on-surface text-sm font-label px-5 py-2 rounded-full border border-outline-variant/20 hover:bg-surface-container-high hover:border-primary/50 transition-all duration-300 shadow-[0_8px_16px_rgba(0,0,0,0.2)] whitespace-nowrap flex items-center gap-1.5 group">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary opacity-70 group-hover:opacity-100 transition-opacity"></span>
+                Yes, let's start
+            </button>
+<button class="bg-surface-container-highest/80 backdrop-blur-md text-on-surface text-sm font-label px-5 py-2 rounded-full border border-outline-variant/20 hover:bg-surface-container-high hover:border-secondary/50 transition-all duration-300 shadow-[0_8px_16px_rgba(0,0,0,0.2)] whitespace-nowrap">
+                Maybe later
+            </button>
+<button class="bg-surface-container-highest/80 backdrop-blur-md text-on-surface text-sm font-label px-5 py-2 rounded-full border border-outline-variant/20 hover:bg-surface-container-high hover:border-error-dim/50 transition-all duration-300 shadow-[0_8px_16px_rgba(0,0,0,0.2)] whitespace-nowrap">
+                No
+            </button>
+<button class="bg-surface-container-highest/80 backdrop-blur-md text-on-surface text-sm font-label px-5 py-2 rounded-full border border-outline-variant/20 hover:bg-surface-container-high hover:border-outline-variant/80 transition-all duration-300 shadow-[0_8px_16px_rgba(0,0,0,0.2)] whitespace-nowrap flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[1rem] opacity-70">fast_forward</span>
+                Let's Skip
+            </button>
+</div>
+<!-- Minimal Secure Text Input -->
+<div class="relative max-w-lg mx-auto w-full">
+<div class="absolute inset-0 bg-surface-container-lowest rounded-3xl blur-md opacity-50"></div>
+<div class="relative flex items-center bg-surface-container-lowest rounded-3xl border border-outline-variant/20 focus-within:border-primary/40 focus-within:bg-surface-container-high transition-all duration-300 p-1.5 shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
+<!-- Attachment/Options Button -->
+<button aria-label="More options" class="p-2.5 text-on-surface-variant hover:text-primary transition-colors focus:outline-none rounded-full">
+<span class="material-symbols-outlined">add_circle</span>
+</button>
+<!-- Input Field -->
+<input autocomplete="off" class="flex-1 bg-transparent border-none text-on-surface text-sm font-body placeholder-on-surface-variant/50 focus:ring-0 px-2 py-3 outline-none" placeholder="Share your thoughts softly..." type="text"/>
+<!-- Voice/Send Button Container -->
+<div class="flex items-center space-x-1 pr-1">
+<button aria-label="Voice input" class="p-2 text-on-surface-variant hover:text-secondary-fixed transition-colors focus:outline-none rounded-full">
+<span class="material-symbols-outlined">mic</span>
+</button>
+<!-- Primary Send Button with Gradient -->
+<button aria-label="Send message" class="p-2.5 rounded-full bg-gradient-to-br from-primary to-primary-container text-on-primary-container hover:shadow-[0_0_15px_rgba(241,131,255,0.4)] transition-all duration-300 focus:outline-none flex items-center justify-center transform hover:scale-105 active:scale-95">
+<span class="material-symbols-outlined text-[1.1rem] filled-icon translate-x-[1px] -translate-y-[1px]">send</span>
+</button>
+</div>
+</div>
+<!-- Secure Context Note -->
+<div class="flex items-center justify-center mt-3 gap-1.5 text-on-surface-variant/40">
+<span class="material-symbols-outlined text-[0.7rem]">lock</span>
+<span class="text-[0.6rem] font-label uppercase tracking-widest">End-to-End Encrypted Sanctuary</span>
+</div>
+</div>
+</div>
+<!-- Navigation Drawer (Hidden by default, assumed accessible via TopAppBar menu) -->
+<!-- Added structurally based on JSON to complete the system components context, though not visually required on screen 1 primary state -->
+<aside class="fixed inset-y-0 left-0 z-[60] bg-surface dark:bg-surface shadow-2xl shadow-black h-full w-80 rounded-r-xl flex flex-col p-6 space-y-4 transform -translate-x-full transition-transform duration-300" id="nav-drawer">
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center space-x-3">
+<img alt="User photo" class="w-12 h-12 rounded-full object-cover border border-outline-variant/30" data-alt="A moody, high-end profile picture of a person silhouetted against a softly glowing neon magenta light in a dark room. Deep blacks, luxurious feel." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1BIo0IeRrzHJrwrruszbOyb_fwwHfz2zO1KRDYRHADLuxNaR6h_nTgSykJGPTm7nwoRA27pqCDIzs5r3SrRjQvK3Gmr1L96880Yn8sNaQId-c1B0KBKm3-Tu4eMifKVIhQBuS-5QsxMORoWA9Yko8FjFv1Wpbw8wJGgCV1FLXZzoDr3mJ00etVodeIu3ZM_XxWhAFEap4G48yBmVRwgoHKi21Qm9TOpjCESzRJroh1cvK82WbU0ehfIaWE121RJJiIrehoHQfofc"/>
+<div>
+<h2 class="font-headline text-lg font-bold text-on-surface">Radiant Soul</h2>
+<p class="font-body text-xs text-primary">Sanctuary Member</p>
+</div>
+</div>
+<button aria-label="Close menu" class="text-on-surface-variant p-2" onclick="document.getElementById('nav-drawer').classList.add('-translate-x-full')">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<nav class="flex-1 flex flex-col space-y-2 mt-4">
+<a class="flex items-center space-x-3 px-4 py-3 text-tertiary-fixed font-bold bg-surface-container-high rounded-xl hover:bg-surface-container-low transition-colors active:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined">spa</span>
+<span>My Sanctuary</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-colors active:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined">auto_stories</span>
+<span>Intimacy Journal</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-colors active:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined">lock</span>
+<span>Privacy Vault</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-colors active:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined">diversity_3</span>
+<span>Community</span>
+</a>
+</nav>
+<div class="mt-auto border-t border-outline-variant/10 pt-4">
+<a class="flex items-center space-x-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-colors active:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>Settings</span>
+</a>
+</div>
+</aside>
+<script>
+        // Simple script to auto-scroll chat to bottom on load
+        document.addEventListener("DOMContentLoaded", function() {
+            const chatContainer = document.getElementById('chat-container');
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            
+            // Mock functionality for opening drawer
+            const menuBtn = document.querySelector('header button[aria-label="Menu"]');
+            menuBtn.addEventListener('click', () => {
+                document.getElementById('nav-drawer').classList.remove('-translate-x-full');
+            });
+        });
+    </script>
+</body></html>

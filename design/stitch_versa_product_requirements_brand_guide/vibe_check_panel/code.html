@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Versa - The Vibe Check Panel</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-bright": "#2c2c2c",
+                        "tertiary-container": "#5cfd80",
+                        "inverse-primary": "#9b26af",
+                        "on-secondary": "#4a2800",
+                        "on-primary-container": "#41004c",
+                        "surface-container-low": "#131313",
+                        "on-secondary-fixed": "#4f2c00",
+                        "on-background": "#ffffff",
+                        "primary-container": "#e770f8",
+                        "error-container": "#a70138",
+                        "surface-container-highest": "#262626",
+                        "on-secondary-container": "#fff6f1",
+                        "inverse-on-surface": "#565555",
+                        "on-primary-fixed-variant": "#540062",
+                        "secondary": "#ff9800",
+                        "on-tertiary-fixed-variant": "#006827",
+                        "tertiary": "#b8ffbb",
+                        "tertiary-fixed-dim": "#4bee74",
+                        "on-primary": "#540062",
+                        "on-error": "#490013",
+                        "outline-variant": "#484847",
+                        "secondary-dim": "#ec8c00",
+                        "on-tertiary-container": "#005d22",
+                        "tertiary-dim": "#4bee74",
+                        "tertiary-fixed": "#5cfd80",
+                        "inverse-surface": "#fcf9f8",
+                        "secondary-fixed": "#ffc791",
+                        "primary": "#f183ff",
+                        "on-error-container": "#ffb2b9",
+                        "surface-container-high": "#201f1f",
+                        "on-tertiary-fixed": "#004819",
+                        "outline": "#767575",
+                        "on-surface": "#ffffff",
+                        "on-surface-variant": "#adaaaa",
+                        "error-dim": "#d73357",
+                        "surface-variant": "#262626",
+                        "on-primary-fixed": "#010002",
+                        "surface": "#0e0e0e",
+                        "primary-fixed": "#ea73fb",
+                        "secondary-container": "#8b5000",
+                        "secondary-fixed-dim": "#ffb467",
+                        "primary-fixed-dim": "#db65ec",
+                        "on-secondary-fixed-variant": "#774400",
+                        "primary-dim": "#e46df5",
+                        "on-tertiary": "#006727",
+                        "surface-container": "#1a1919",
+                        "error": "#ff6e84",
+                        "background": "#0e0e0e",
+                        "surface-dim": "#0e0e0e",
+                        "surface-container-lowest": "#000000",
+                        "surface-tint": "#f183ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {},
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "display": ["Manrope"],
+                        "body": ["Plus Jakarta Sans"],
+                        "label": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {}
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom styles for sliders and glows */
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 24px;
+            width: 24px;
+            border-radius: 50%;
+            background: #f183ff; /* primary */
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(241, 131, 255, 0.6);
+            transition: box-shadow 0.2s ease, transform 0.1s ease;
+        }
+        input[type=range]::-webkit-slider-thumb:active {
+            transform: scale(1.1);
+            box-shadow: 0 0 25px rgba(241, 131, 255, 0.8);
+        }
+        input[type=range]::-moz-range-thumb {
+            height: 24px;
+            width: 24px;
+            border-radius: 50%;
+            background: #f183ff;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(241, 131, 255, 0.6);
+            border: none;
+        }
+        input[type=range]::-moz-range-thumb:active {
+            transform: scale(1.1);
+            box-shadow: 0 0 25px rgba(241, 131, 255, 0.8);
+        }
+        input[type=range] {
+            -webkit-appearance: none;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .chip-glow.active {
+            box-shadow: 0 0 15px rgba(228, 109, 245, 0.4); /* primary-dim */
+            background-color: theme('colors.primary-dim');
+            color: theme('colors.on-primary');
+        }
+        .segment-active {
+            background-color: theme('colors.secondary-container');
+            color: theme('colors.on-secondary-container');
+            box-shadow: 0 0 15px rgba(255, 152, 0, 0.3);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-body overflow-hidden">
+<!-- Background Layer (Simulating Sanctuary View) -->
+<div class="absolute inset-0 z-0">
+<div class="bg-cover bg-center w-full h-full opacity-60" data-alt="A softly focused, deeply cinematic view of a nighttime luxury spa interior. The scene features dark, rich textures of black marble and midnight wood, accented by glowing jewel-toned magenta and emerald lights reflecting off calm, rippling water. The atmosphere is deeply relaxing, immersive, and premium, avoiding standard clinical whites. Radiant Sanctuary aesthetic." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBUzQiUXP-XZjmlrhGa4noiKeF6Xc8AZ4Lbzx2PJNceL5ZCC_pnkJZEPuQVD2SApm5erAZ5d1yX-fYCKoEQLJxqu0KsJhHS_iNoAncr66ZqdiTE6MFMo1UTWtc98Kh8ZpfgaDXWR4HwE6aerbjlyA8mMZymoSLxMWSLFo3drIJobuEMdWV6_r2wc-7ZFiUrpOmzo8Hze-MXHQNOsYxz0mTu319-xcFCAlRviuHEZI_mr0jwj4ikbLV1n8zM21a3xq0rD2NHH9txKqY')"></div>
+</div>
+<!-- Overlay Panel -->
+<div class="relative z-10 h-screen w-full flex flex-col bg-surface/80 backdrop-blur-xl transition-all duration-500 ease-in-out">
+<!-- TopAppBar (Transactional - Hidden global nav, standalone header) -->
+<header class="flex items-center justify-between px-6 h-16 w-full max-w-none bg-surface/80 dark:bg-surface/80 backdrop-blur-xl shadow-none">
+<div class="flex items-center space-x-4">
+<!-- Close Button for transactional panel -->
+<button aria-label="Close Vibe Check Panel" class="p-2 text-on-surface-variant hover:text-primary transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined text-2xl">close</span>
+</button>
+</div>
+<div class="flex-1 text-center">
+<h1 class="font-headline font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary-container text-xl tracking-tight">The Vibe Check</h1>
+</div>
+<div class="w-10"></div> <!-- Balancer for centering -->
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 overflow-y-auto px-6 py-8 flex flex-col items-center">
+<div class="w-full max-w-md space-y-12 pb-24">
+<!-- Intent Section -->
+<section class="space-y-6">
+<h2 class="font-display text-2xl font-bold tracking-tight">Set the Intention</h2>
+<p class="text-on-surface-variant text-sm mb-6">How are you arriving to the sanctuary today?</p>
+<!-- Vertical Sliders wrapped in a card -->
+<div class="bg-surface-container-low p-6 rounded-xl space-y-8 shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
+<!-- Physical Energy Slider -->
+<div class="space-y-4">
+<div class="flex justify-between items-center">
+<label class="font-label font-medium text-lg" for="physical-energy">Physical Energy</label>
+<span class="material-symbols-outlined text-tertiary" style="font-variation-settings: 'FILL' 1;">bolt</span>
+</div>
+<div class="relative w-full h-8 flex items-center">
+<input class="w-full h-2 rounded-full cursor-pointer outline-none" id="physical-energy" max="100" min="0" type="range" value="75"/>
+</div>
+<div class="flex justify-between text-xs text-on-surface-variant opacity-60">
+<span>Restful</span>
+<span>Dynamic</span>
+</div>
+</div>
+<!-- Emotional Capacity Slider -->
+<div class="space-y-4">
+<div class="flex justify-between items-center">
+<label class="font-label font-medium text-lg" for="emotional-capacity">Emotional Capacity</label>
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</div>
+<div class="relative w-full h-8 flex items-center">
+<input class="w-full h-2 rounded-full cursor-pointer outline-none" id="emotional-capacity" max="100" min="0" type="range" value="40"/>
+</div>
+<div class="flex justify-between text-xs text-on-surface-variant opacity-60">
+<span>Delicate</span>
+<span>Expansive</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Duration Section -->
+<section class="space-y-6">
+<h2 class="font-display text-xl font-bold tracking-tight">Duration</h2>
+<div class="bg-surface-container-lowest p-2 rounded-full flex justify-between outline outline-1 outline-outline-variant/20 shadow-inner">
+<button class="flex-1 py-3 text-sm font-label rounded-full text-on-surface-variant hover:text-primary transition-colors focus:outline-none">
+                            15m
+                        </button>
+<button class="flex-1 py-3 text-sm font-label rounded-full segment-active transition-all focus:outline-none">
+                            30m
+                        </button>
+<button class="flex-1 py-3 text-sm font-label rounded-full text-on-surface-variant hover:text-primary transition-colors focus:outline-none">
+                            45m
+                        </button>
+</div>
+</section>
+<!-- Focus Tags Section -->
+<section class="space-y-6">
+<h2 class="font-display text-xl font-bold tracking-tight">Focus Elements</h2>
+<div class="flex flex-wrap gap-3">
+<button class="chip-glow active px-5 py-2.5 rounded-full bg-surface-container-highest text-sm font-label border border-outline-variant/20 transition-all focus:outline-none flex items-center space-x-2">
+<span class="material-symbols-outlined text-sm">self_improvement</span>
+<span>Somatic</span>
+</button>
+<button class="chip-glow px-5 py-2.5 rounded-full bg-surface-container-highest text-on-surface-variant text-sm font-label border border-outline-variant/20 hover:text-on-surface transition-all focus:outline-none flex items-center space-x-2">
+<span class="material-symbols-outlined text-sm">forum</span>
+<span>Verbal Connection</span>
+</button>
+<button class="chip-glow px-5 py-2.5 rounded-full bg-surface-container-highest text-on-surface-variant text-sm font-label border border-outline-variant/20 hover:text-on-surface transition-all focus:outline-none flex items-center space-x-2">
+<span class="material-symbols-outlined text-sm">air</span>
+<span>Breathwork</span>
+</button>
+</div>
+</section>
+<!-- Action Button -->
+<div class="pt-8 w-full">
+<button class="w-full bg-gradient-to-r from-primary to-primary-container text-on-primary-fixed font-bold font-label py-5 px-6 rounded-xl text-lg shadow-[0_15px_30px_rgba(241,131,255,0.3)] hover:opacity-90 active:scale-95 transition-all duration-200">
+                        Begin Session
+                    </button>
+</div>
+</div>
+</main>
+</div>
+<script>
+        // Simple script for basic interactions
+        document.querySelectorAll('.chip-glow').forEach(chip => {
+            chip.addEventListener('click', () => {
+                chip.classList.toggle('active');
+                if (chip.classList.contains('active')) {
+                    chip.classList.remove('text-on-surface-variant');
+                } else {
+                    chip.classList.add('text-on-surface-variant');
+                }
+            });
+        });
+
+        const segments = document.querySelectorAll('.bg-surface-container-lowest button');
+        segments.forEach(btn => {
+            btn.addEventListener('click', () => {
+                segments.forEach(b => {
+                    b.classList.remove('segment-active');
+                    b.classList.add('text-on-surface-variant');
+                });
+                btn.classList.add('segment-active');
+                btn.classList.remove('text-on-surface-variant');
+            });
+        });
+
+        // Basic slider background fill logic (visual only)
+        const sliders = document.querySelectorAll('input[type="range"]');
+        sliders.forEach(slider => {
+            slider.addEventListener('input', function() {
+                const value = (this.value - this.min) / (this.max - this.min) * 100;
+                this.style.background = `linear-gradient(to right, #f183ff 0%, #f183ff ${value}%, rgba(255,255,255,0.1) ${value}%, rgba(255,255,255,0.1) 100%)`;
+            });
+            // trigger on load
+            slider.dispatchEvent(new Event('input'));
+        });
+    </script>
+</body></html>

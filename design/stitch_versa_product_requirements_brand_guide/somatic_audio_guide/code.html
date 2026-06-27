@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Versa - Somatic Audio Guide Player</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-bright": "#2c2c2c",
+                    "tertiary-container": "#5cfd80",
+                    "inverse-primary": "#9b26af",
+                    "on-secondary": "#4a2800",
+                    "on-primary-container": "#41004c",
+                    "surface-container-low": "#131313",
+                    "on-secondary-fixed": "#4f2c00",
+                    "on-background": "#ffffff",
+                    "primary-container": "#e770f8",
+                    "error-container": "#a70138",
+                    "surface-container-highest": "#262626",
+                    "on-secondary-container": "#fff6f1",
+                    "inverse-on-surface": "#565555",
+                    "on-primary-fixed-variant": "#540062",
+                    "secondary": "#ff9800",
+                    "on-tertiary-fixed-variant": "#006827",
+                    "tertiary": "#b8ffbb",
+                    "tertiary-fixed-dim": "#4bee74",
+                    "on-primary": "#540062",
+                    "on-error": "#490013",
+                    "outline-variant": "#484847",
+                    "secondary-dim": "#ec8c00",
+                    "on-tertiary-container": "#005d22",
+                    "tertiary-dim": "#4bee74",
+                    "tertiary-fixed": "#5cfd80",
+                    "inverse-surface": "#fcf9f8",
+                    "secondary-fixed": "#ffc791",
+                    "primary": "#f183ff",
+                    "on-error-container": "#ffb2b9",
+                    "surface-container-high": "#201f1f",
+                    "on-tertiary-fixed": "#004819",
+                    "outline": "#767575",
+                    "on-surface": "#ffffff",
+                    "on-surface-variant": "#adaaaa",
+                    "error-dim": "#d73357",
+                    "surface-variant": "#262626",
+                    "on-primary-fixed": "#010002",
+                    "surface": "#0e0e0e",
+                    "primary-fixed": "#ea73fb",
+                    "secondary-container": "#8b5000",
+                    "secondary-fixed-dim": "#ffb467",
+                    "primary-fixed-dim": "#db65ec",
+                    "on-secondary-fixed-variant": "#774400",
+                    "primary-dim": "#e46df5",
+                    "on-tertiary": "#006727",
+                    "surface-container": "#1a1919",
+                    "error": "#ff6e84",
+                    "background": "#0e0e0e",
+                    "surface-dim": "#0e0e0e",
+                    "surface-container-lowest": "#000000",
+                    "surface-tint": "#f183ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope", "sans-serif"],
+                    "display": ["Manrope", "sans-serif"],
+                    "body": ["Plus Jakarta Sans", "sans-serif"],
+                    "label": ["Plus Jakarta Sans", "sans-serif"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        /* Custom Keyframes for Immersive Animations */
+        @keyframes slow-pulse {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 0.5; }
+        }
+        @keyframes ripple {
+            0% { transform: scale(0.8); opacity: 1; }
+            100% { transform: scale(2); opacity: 0; }
+        }
+        .animate-ripple {
+            animation: ripple 3s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+        }
+        .animate-ripple-delay {
+            animation: ripple 3s cubic-bezier(0, 0.2, 0.8, 1) 1.5s infinite;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-body h-screen flex flex-col overflow-hidden relative">
+<!-- Immersive Background Glows -->
+<div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+<div class="absolute top-[-10%] left-[-10%] w-[60vw] h-[60vw] bg-primary/20 rounded-full mix-blend-screen filter blur-[120px] animate-[slow-pulse_8s_ease-in-out_infinite]"></div>
+<div class="absolute bottom-[-10%] right-[-10%] w-[60vw] h-[60vw] bg-secondary/15 rounded-full mix-blend-screen filter blur-[120px] animate-[slow-pulse_10s_ease-in-out_infinite_reverse]"></div>
+</div>
+<!-- Task-Focused Player Header -->
+<header class="w-full h-16 flex items-center justify-between px-6 z-50 relative bg-transparent">
+<button class="w-12 h-12 flex items-center justify-center rounded-full bg-surface-container-low/50 backdrop-blur-md text-on-surface hover:bg-surface-container-high transition-colors group">
+<span class="material-symbols-outlined text-2xl group-hover:-translate-x-1 transition-transform">arrow_back</span>
+</button>
+<div class="font-headline font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary text-lg tracking-tight uppercase letter-spacing-[0.1em]">Somatic Session</div>
+<button class="w-12 h-12 flex items-center justify-center rounded-full bg-surface-container-low/50 backdrop-blur-md text-on-surface hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-2xl">more_vert</span>
+</button>
+</header>
+<!-- Main Player Canvas -->
+<main class="flex-1 flex flex-col items-center justify-center relative z-10 px-6 pb-32">
+<!-- Abstract Visualizer Ring -->
+<div class="relative w-[300px] h-[300px] mb-16 flex items-center justify-center">
+<!-- Ripple Effects -->
+<div class="absolute inset-0 bg-primary/10 rounded-full animate-ripple"></div>
+<div class="absolute inset-0 bg-secondary/10 rounded-full animate-ripple-delay"></div>
+<!-- Core Glowing Ring -->
+<div class="absolute inset-4 rounded-full bg-surface-container-high shadow-[0_0_60px_rgba(241,131,255,0.15)] flex items-center justify-center overflow-hidden z-10 border border-white/5">
+<!-- Inner Texture/Image -->
+<div class="w-full h-full bg-cover bg-center mix-blend-overlay opacity-50 animate-[slow-pulse_5s_ease-in-out_infinite]" data-alt="A deep, abstract digital art texture representing calm energy. Swirling mist in rich plum and warm saffron colors against a midnight background. Soft focus, highly aesthetic, luxury wellness visualizer." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAzYoUfkJn_Rrz8x2Lb5kAD6VcaqOLJToCWDlr0l54TAwcdC0FklAJhOw8hKptd7D49__8mkziTpscJGGRlZ36pS5XfRBpgCDSBRLl_zGvhtMNwerZbEVFPC_424UKJd0b2M__EWALkV4LIeO7NVlj7cr-Y3p2iVHEr_PhggWN7tMqhZxPiJiaCwfLzZuq52xCj6xZzCYsSdzuUEuiXzUlXldW3SiJyOSEuRCzecXyWBXombd_fP-xS2um8QHyrX2rmrnFCe5JcpWo')"></div>
+<!-- Central Icon -->
+<span class="material-symbols-outlined text-6xl text-primary absolute z-20" style="font-variation-settings: 'FILL' 0, 'wght' 200;">graphic_eq</span>
+</div>
+</div>
+<!-- Track Information -->
+<div class="text-center mb-10 w-full max-w-sm">
+<h1 class="font-headline text-3xl md:text-4xl font-extrabold text-on-surface tracking-tight mb-2 leading-tight">Calming the<br/>Nervous System</h1>
+<p class="font-body text-lg text-secondary-fixed-dim">Guided by Dr. Aris</p>
+</div>
+<!-- Progress Indicator -->
+<div class="w-full max-w-md mb-10">
+<div class="h-2 w-full bg-surface-container-lowest rounded-full overflow-hidden shadow-inner relative group cursor-pointer">
+<!-- Buffered -->
+<div class="absolute top-0 left-0 h-full w-2/3 bg-surface-container-high rounded-full"></div>
+<!-- Played Gradient -->
+<div class="absolute top-0 left-0 h-full bg-gradient-to-r from-secondary to-primary w-[45%] rounded-full relative">
+<!-- Glow Knob -->
+<div class="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 bg-inverse-surface rounded-full shadow-[0_0_15px_rgba(241,131,255,0.9)] opacity-0 group-hover:opacity-100 transition-opacity"></div>
+</div>
+</div>
+<div class="flex justify-between text-label-md text-on-surface-variant mt-3 font-label">
+<span>06:14</span>
+<span>15:00</span>
+</div>
+</div>
+<!-- Transport Controls -->
+<div class="flex items-center justify-center space-x-10">
+<button class="text-on-surface-variant hover:text-secondary-fixed transition-colors active:scale-90 flex flex-col items-center gap-1">
+<span class="material-symbols-outlined text-4xl" data-weight="fill">replay_10</span>
+</button>
+<!-- Primary Play/Pause CTA -->
+<button class="w-24 h-24 bg-gradient-to-tr from-primary to-secondary rounded-[2rem] flex items-center justify-center text-on-secondary shadow-[0_20px_40px_rgba(241,131,255,0.3)] hover:scale-105 hover:shadow-[0_20px_50px_rgba(241,131,255,0.5)] active:scale-95 transition-all duration-300">
+<span class="material-symbols-outlined text-6xl" data-weight="fill">pause</span>
+</button>
+<button class="text-on-surface-variant hover:text-secondary-fixed transition-colors active:scale-90 flex flex-col items-center gap-1">
+<span class="material-symbols-outlined text-4xl" data-weight="fill">forward_10</span>
+</button>
+</div>
+</main>
+<!-- 'Read Transcript' Sliding Drawer -->
+<!-- Default state is partially showing the handle, translates up on interaction -->
+<div class="absolute bottom-0 left-0 w-full bg-surface-container/80 backdrop-blur-2xl rounded-t-3xl shadow-[0_-20px_60px_rgba(0,0,0,0.8)] z-50 transform transition-transform duration-500 ease-[cubic-bezier(0.3,0,0,1)] translate-y-[calc(100%-4.5rem)] flex flex-col border-t border-white/5" id="transcriptDrawer">
+<!-- Drag Handle Area -->
+<div class="w-full py-5 cursor-pointer flex flex-col items-center justify-center" id="drawerHandle">
+<div class="w-16 h-1.5 bg-outline-variant/60 rounded-full mb-3"></div>
+<div class="flex items-center gap-2 text-on-surface-variant font-label text-label-md uppercase tracking-wider">
+<span class="material-symbols-outlined text-lg">expand_less</span>
+                Read Transcript
+            </div>
+</div>
+<!-- Drawer Content -->
+<div class="px-8 pb-8 h-[442px] flex flex-col">
+<div class="flex items-center justify-between mb-8">
+<h3 class="font-headline text-2xl font-bold text-on-surface">Transcript</h3>
+<button class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors" id="closeDrawerBtn">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- Scrollable Text Area -->
+<div class="flex-1 overflow-y-auto pr-4 space-y-6 text-body-lg text-on-surface-variant font-body custom-scrollbar">
+<p class="text-on-surface font-semibold text-xl">Notice the sensation of your feet resting on the floor.</p>
+<p>Feel the gravity anchoring you perfectly in this moment. You don't need to hold yourself up; the earth is holding you with effortless strength.</p>
+<p>Take a slow, deep breath in... drawing in cool, fresh air...</p>
+<p class="text-primary-dim italic">...and let it fall out completely, releasing any tension in your jaw.</p>
+<p>As we begin to map the nervous system today, I want you to visualize a gentle, warm light moving upwards from your toes. There is no rush here. You are in a safe, radiant sanctuary.</p>
+<p>Allow this warmth to slowly envelop your calves, your knees, bringing a sense of profound stillness to every muscle it touches.</p>
+</div>
+</div>
+</div>
+<!-- Inline Script for Drawer Interaction -->
+<script>
+        const drawer = document.getElementById('transcriptDrawer');
+        const handle = document.getElementById('drawerHandle');
+        const closeBtn = document.getElementById('closeDrawerBtn');
+        let isOpen = false;
+
+        function toggleDrawer() {
+            isOpen = !isOpen;
+            if (isOpen) {
+                drawer.classList.remove('translate-y-[calc(100%-4.5rem)]');
+                drawer.classList.add('translate-y-0');
+                handle.querySelector('.material-symbols-outlined').textContent = 'expand_more';
+            } else {
+                drawer.classList.add('translate-y-[calc(100%-4.5rem)]');
+                drawer.classList.remove('translate-y-0');
+                handle.querySelector('.material-symbols-outlined').textContent = 'expand_less';
+            }
+        }
+
+        handle.addEventListener('click', toggleDrawer);
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if(isOpen) toggleDrawer();
+        });
+    </script>
+<style>
+        /* Custom Scrollbar for Transcript to maintain luxury feel */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #262626; /* surface-container-highest */
+            border-radius: 20px;
+        }
+    </style>
+</body></html>

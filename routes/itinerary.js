@@ -316,4 +316,25 @@ function sanitizeJSONResponse(text) {
   return clean.trim();
 }
 
+// Background database timer ticker
+setInterval(() => {
+  try {
+    const activeSessions = db.prepare("SELECT pairing_id, timer_countdown FROM active_sessions WHERE session_status = 'Timer_Active'").all();
+    
+    const updateTick = db.prepare("UPDATE active_sessions SET timer_countdown = ?, updated_at = CURRENT_TIMESTAMP WHERE pairing_id = ?");
+    const finishSession = db.prepare("UPDATE active_sessions SET session_status = 'Finished', timer_countdown = 0, last_event_triggered = 'TIMER_EXPIRED', updated_at = CURRENT_TIMESTAMP WHERE pairing_id = ?");
+
+    activeSessions.forEach(session => {
+      const nextTime = session.timer_countdown - 1;
+      if (nextTime <= 0) {
+        finishSession.run(session.pairing_id);
+      } else {
+        updateTick.run(nextTime, session.pairing_id);
+      }
+    });
+  } catch (err) {
+    // Avoid crashing background process on database lock or timeout
+  }
+}, 1000);
+
 module.exports = router;

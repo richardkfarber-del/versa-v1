@@ -1,136 +1,384 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { getMatchResults } from '../api';
+import { useNavigate } from 'react-pointer-router'; // Actually react-router-dom
+import { useNavigate as useDomNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../api';
+
+interface Match {
+  category: string;
+  description: string;
+  icon?: string;
+  color?: string;
+}
+
+interface Product {
+  id: string;
+  name: string;
+  brand: string;
+  rating: number;
+  imageUrl?: string;
+  redirectUrl: string;
+}
 
 const MatchReveal: React.FC = () => {
-  const [matches, setMatches] = useState<{category: string; description: string; icon?: string; color?: string}[]>([]);
+  const navigate = useDomNavigate();
+  const [matches, setMatches] = useState<Match[]>([
+    { category: 'Deep Conversation', description: 'Explore the unsaid with guided prompts for intimacy.', icon: 'forum', color: 'secondary' },
+    { category: '15-Minute Massage', description: 'A gentle tactile exchange to release physical tension.', icon: 'self_care', color: 'primary' },
+    { category: 'Slow Breathwork', description: 'Synchronized breathing to align your nervous systems.', icon: 'air', color: 'tertiary' }
+  ]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
+  
+  // Vibe Check drawer states
+  const [showVibeCheck, setShowVibeCheck] = useState(false);
+  const [physicalEnergy, setPhysicalEnergy] = useState(75);
+  const [emotionalCapacity, setEmotionalCapacity] = useState(50);
+  const [duration, setDuration] = useState(15);
+  const [focusElement, setFocusElement] = useState<'Somatic' | 'Verbal' | 'Breathing'>('Somatic');
+  
+  // LLM itinerary generation task states
+  const [generating, setGenerating] = useState(false);
+  const [itineraryTaskId, setItineraryTaskId] = useState<string | null>(null);
+
+  const token = localStorage.getItem('versa_token');
+  const pairingId = localStorage.getItem('versa_pairing_id') || 'pairing-123-uuid';
 
   useEffect(() => {
-    const fetchMatches = async () => {
+    // Fetch products curated for their overlapping desires
+    const fetchData = async () => {
       try {
-        const partnerA = localStorage.getItem('versa_user_id') || 'partnerA_123';
-        // Mocking partnerB id for now since we don't have linking flow implemented yet
-        const partnerB = 'partnerB_456'; 
-        const result = await getMatchResults(partnerA, partnerB);
-        setMatches(result?.matchedCategories || [
-          { category: 'Deep Conversation', description: 'Explore the unsaid with guided prompts for intimacy.', icon: 'forum', color: 'secondary' },
-          { category: '15-Minute Massage', description: 'A gentle tactile exchange to release physical tension.', icon: 'self_care', color: 'primary' },
-          { category: 'Slow Breathwork', description: 'Synchronized breathing to align your nervous systems.', icon: 'air', color: 'tertiary' }
-        ]);
-      } catch (error) {
-        console.error("Failed to fetch matches", error);
-        // Fallback for demo
-        setMatches([
-          { category: 'Deep Conversation', description: 'Explore the unsaid with guided prompts for intimacy.', icon: 'forum', color: 'secondary' },
-          { category: '15-Minute Massage', description: 'A gentle tactile exchange to release physical tension.', icon: 'self_care', color: 'primary' },
-          { category: 'Slow Breathwork', description: 'Synchronized breathing to align your nervous systems.', icon: 'air', color: 'tertiary' }
-        ]);
+        const prodRes = await fetch(`${API_BASE_URL}/v1/products/recommend/${pairingId}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (prodRes.ok) {
+          const prodData = await prodRes.json();
+          if (prodData.success) {
+            setProducts(prodData.products);
+          }
+        }
+      } catch (err) {
+        console.error('Failed to load products:', err);
       } finally {
         setLoading(false);
       }
     };
+    fetchData();
+  }, [pairingId, token]);
 
-    fetchMatches();
-  }, []);
+  // Polling for generative itinerary task completion
+  useEffect(() => {
+    if (!itineraryTaskId) return;
+
+    let intervalId: ReturnType<typeof setInterval>;
+
+    const pollTask = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/v1/itinerary/tasks/${itineraryTaskId}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!response.ok) throw new Error('Polling failed');
+        const data = await response.json();
+        
+        if (data.success && data.task) {
+          const { status } = data.task;
+          if (status === 'completed') {
+            clearInterval(intervalId);
+            setItineraryTaskId(null);
+            setGenerating(false);
+            setShowVibeCheck(false);
+            // Navigate to active date player
+            navigate('/date');
+          } else if (status === 'error') {
+            clearInterval(intervalId);
+            setItineraryTaskId(null);
+            setGenerating(false);
+            alert('Failed to construct dynamic itinerary. Launching pre-vetted fallback instead.');
+            navigate('/date');
+          }
+        }
+      } catch (err) {
+        console.error('Polling error:', err);
+      }
+    };
+
+    intervalId = setInterval(pollTask, 2000);
+    return () => clearInterval(intervalId);
+  }, [itineraryTaskId]);
+
+  const handleStartSession = async () => {
+    setGenerating(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/v1/itinerary/generate`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          pairingId,
+          energyLevel: physicalEnergy > 50 ? 'High' : 'Low',
+          duration,
+          focus: focusElement
+        })
+      });
+
+      if (!response.ok) throw new Error('Failed to generate session');
+      const data = await response.json();
+      if (data.success && data.taskId) {
+        setItineraryTaskId(data.taskId);
+      } else {
+        setGenerating(false);
+        alert('Server did not return a valid task tracking ID. Loading pre-vetted session.');
+        navigate('/date');
+      }
+    } catch (err) {
+      console.error(err);
+      setGenerating(false);
+      navigate('/date'); // go to date as fallback
+    }
+  };
 
   return (
-    <div className="bg-surface text-on-surface font-body min-h-screen selection:bg-primary selection:text-on-primary">
-      <header className="flex justify-between items-center w-full px-6 py-6 fixed top-0 z-50 bg-transparent backdrop-blur-xl bg-opacity-80">
-        <div className="flex items-center gap-3">
-          <img
-            alt="Versa App Logo"
-            className="w-10 h-10"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrvmj9fE8wymT5lgT3LS-1I4tErKwpKlcZZuBgCtk4uUqeqJUROyAn248BClzDQ4WiWQNsUuKA0ARQj5N1rlYYBIBTJFlbVQOgKk7ssUajQdcgft3WfNInH_cstvFo8Z1t736NVFdm33kSYq3d8aCaFb2HpGR8Y4DSf5Xfjcxjom-cP04c0gupbVoRMpRPIwQGKcVlElt1TdH9ZrHLHnB0hWT7XO4qntCiX9borKuvuxlTIfWS03Qee_G58IWo0ZPhlTmh7FsypTg"
-          />
-          <span className="text-2xl font-bold tracking-tighter font-headline text-slate-100">Versa</span>
+    <div className="bg-surface text-on-surface font-body min-h-screen relative antialiased select-none pb-28">
+      {/* TopAppBar */}
+      <header className="fixed top-0 w-full z-40 bg-surface/80 backdrop-blur-xl border-b border-outline-variant/10">
+        <div className="flex items-center justify-between px-6 h-16 w-full">
+          <button className="text-primary hover:opacity-80 transition-opacity active:scale-95 duration-200">
+            <span className="material-symbols-outlined">menu</span>
+          </button>
+          <h1 className="font-headline font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary-container text-xl tracking-tight">
+            Versa
+          </h1>
+          <button 
+            onClick={() => navigate('/compass')}
+            className="w-8 h-8 rounded-full overflow-hidden border border-outline-variant/20 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors"
+          >
+            <span className="material-symbols-outlined">spa</span>
+          </button>
         </div>
-        <button className="w-10 h-10 rounded-full flex items-center justify-center bg-surface-container-high text-on-surface hover:opacity-80 transition-opacity">
-          <span className="material-symbols-outlined">close</span>
-        </button>
       </header>
 
-      <main className="relative pt-24 pb-32 px-6 max-w-2xl mx-auto min-h-screen overflow-hidden">
-        <div className="asymmetric-shape-1"></div>
-        <div className="asymmetric-shape-2"></div>
-
-        <section className="mb-12">
-          <div className="relative w-full aspect-square mb-10 overflow-hidden rounded-3xl">
-            <img
-              className="w-full h-full object-cover grayscale opacity-40 mix-blend-lighten scale-110"
-              alt="soft focus close up"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCykPTCUvDhwS-a0NL3LPDe4OR-UUcCe8XdkrpIgkTtf9qNvsnVjurVPQlLNVzhKIDlFCJsfMfrMOrXwsxv682nD_4cAprSD3Pae6uFa_8mtOKCZ7Ud49LV9IXdwRVQ9EYZ6XSbXgJdw4Dre35PCj7_b7Eb4f3aUHPLsm-pZBn4jEd_jAuJcaTSmjX--oPd7ggjU8OIugOKWTTij8cVfs-8LVoXLpa1bXMd7fcRHSaAe_gB5v_r0GPNuII4FB__3ydcIcuCTqMA8DM"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-transparent"></div>
-            
-            <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-tertiary/10 text-tertiary mb-6 border border-tertiary/20">
-                <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>favorite</span>
-                <span className="text-[10px] font-bold tracking-[0.2em] uppercase">Symmetry Found</span>
-              </div>
-              <h1 className="text-5xl md:text-6xl font-extrabold font-headline leading-[1.1] tracking-tight text-white mb-4">
-                Your <br />Overlapping <br /><span className="text-primary-container">Desires</span>
-              </h1>
-            </div>
-          </div>
+      {/* Main Content Area */}
+      <main className="max-w-md mx-auto md:max-w-4xl p-6 pt-24 space-y-12">
+        <section className="space-y-2">
+          <h2 className="font-headline text-3xl font-bold tracking-tight">
+            Current <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary-container">Connections</span>
+          </h2>
+          <p className="font-body text-on-surface-variant text-sm">Explore your active blind matches and curated suggestions.</p>
         </section>
 
-        {loading ? (
-          <div className="flex justify-center items-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-          </div>
-        ) : (
-          <section className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-12">
-            {matches.map((match, index) => (
-              <div 
-                key={index} 
-                className={`${index === 0 ? 'md:col-span-2' : ''} glass-card p-6 rounded-3xl border border-outline-variant/10 flex ${index === 0 ? 'items-center justify-between' : 'flex-col justify-between aspect-square'} group hover:bg-surface-container-high transition-all duration-500`}
-              >
-                {index === 0 ? (
-                  <>
-                    <div className="flex flex-col gap-2">
-                      <span className={`text-${match.color || 'secondary'} font-bold text-[11px] tracking-widest uppercase`}>Deep Connection</span>
-                      <h3 className="text-2xl font-headline font-bold text-on-surface">{match.category}</h3>
-                      <p className="text-on-surface-variant text-sm max-w-[240px]">{match.description}</p>
-                    </div>
-                    <div className={`w-16 h-16 rounded-2xl bg-${match.color || 'secondary'}/20 flex items-center justify-center text-${match.color || 'secondary'}-fixed group-hover:scale-110 transition-transform`}>
-                      <span className="material-symbols-outlined text-3xl">{match.icon || 'star'}</span>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className={`w-12 h-12 rounded-xl bg-${match.color || 'primary'}/10 flex items-center justify-center text-${match.color || 'primary'}-dim mb-4`}>
-                      <span className="material-symbols-outlined text-2xl">{match.icon || 'star'}</span>
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-headline font-bold text-on-surface mb-2">{match.category}</h3>
-                      <p className="text-on-surface-variant text-xs leading-relaxed">{match.description}</p>
-                    </div>
-                  </>
-                )}
+        {/* Matches Grid */}
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {matches.map((match, index) => (
+            <div 
+              key={index} 
+              className="bg-surface-container-low rounded-2xl p-5 relative overflow-hidden group cursor-pointer hover:bg-surface-container-high transition-colors duration-300 border border-outline-variant/5"
+            >
+              <div className="absolute -right-12 -top-12 w-32 h-32 bg-primary/10 rounded-full blur-2xl group-hover:bg-primary/20 transition-all duration-500"></div>
+              <div className="flex items-start justify-between relative z-10">
+                <div className="space-y-1">
+                  <div className="flex items-center space-x-2">
+                    <span className="w-2 h-2 rounded-full bg-tertiary shadow-[0_0_8px_#b8ffbb]"></span>
+                    <span className="font-label text-[10px] tracking-wider uppercase text-tertiary">Active Match</span>
+                  </div>
+                  <h3 className="font-headline font-semibold text-lg text-on-surface">{match.category}</h3>
+                  <p className="font-body text-xs text-on-surface-variant">{match.description}</p>
+                </div>
+                <div className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center border border-outline-variant/30">
+                  <span className="material-symbols-outlined text-primary text-lg">{match.icon || 'star'}</span>
+                </div>
               </div>
-            ))}
+            </div>
+          ))}
+        </section>
+
+        {/* Curated Product Recommendation Cards */}
+        {products.length > 0 && (
+          <section className="space-y-6">
+            <h3 className="font-headline font-semibold text-xl text-on-surface-variant flex items-center">
+              <span className="material-symbols-outlined mr-2 text-primary">auto_awesome</span>
+              Curated for Your Vibe
+            </h3>
+            
+            <div className="grid grid-cols-1 gap-6">
+              {products.map(prod => (
+                <div 
+                  key={prod.id}
+                  className="rounded-[2rem] bg-surface-container-low p-6 flex flex-col md:flex-row gap-8 items-center relative overflow-hidden border border-outline-variant/10 shadow-[0_20px_40px_rgba(0,0,0,0.4)]"
+                >
+                  <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
+                  {/* Image placeholder / frame */}
+                  <div className="w-full md:w-48 h-48 rounded-2xl overflow-hidden relative shadow-lg bg-surface-container-high flex items-center justify-center">
+                    <span className="material-symbols-outlined text-4xl text-primary/40">shopping_bag</span>
+                  </div>
+                  {/* Details */}
+                  <div className="flex-1 space-y-4 text-center md:text-left">
+                    <div>
+                      <span className="font-label text-xs uppercase tracking-widest text-on-surface-variant">{prod.brand}</span>
+                      <h4 className="font-headline font-bold text-xl text-on-surface">{prod.name}</h4>
+                    </div>
+                    <div className="flex items-center justify-center md:justify-start space-x-1 text-secondary">
+                      <span className="material-symbols-outlined text-sm">star</span>
+                      <span className="text-xs font-semibold text-on-surface">{prod.rating} / 5</span>
+                    </div>
+                    <a 
+                      href={prod.redirectUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-block bg-surface-container-highest hover:bg-primary/20 text-primary text-xs font-semibold px-4 py-2 rounded-full border border-outline-variant/30 transition-all"
+                    >
+                      View Ethical Retailer
+                    </a>
+                  </div>
+                </div>
+              ))}
+            </div>
           </section>
         )}
-
-        <div className="text-center mb-16">
-          <p className="text-on-surface-variant text-sm italic font-body">"The beauty of a match is the space where two worlds become one."</p>
-        </div>
       </main>
 
-      <div className="fixed bottom-0 left-0 w-full p-8 z-50 bg-gradient-to-t from-surface via-surface/80 to-transparent">
-        <div className="max-w-2xl mx-auto">
-          <button 
-            onClick={() => navigate('/date')}
-            className="w-full bg-gradient-to-r from-secondary to-secondary-dim text-on-secondary py-5 rounded-3xl font-bold font-headline text-lg tracking-tight flex items-center justify-center gap-3 glow-secondary hover:opacity-90 active:scale-[0.98] transition-all"
-          >
-            Start Date Night
-            <span className="material-symbols-outlined">arrow_forward</span>
-          </button>
-          <p className="text-center text-on-surface-variant text-[10px] uppercase tracking-[0.3em] font-bold mt-6 opacity-60">Ready when you both are</p>
-        </div>
+      {/* Floating Bottom Date trigger button */}
+      <div className="fixed bottom-0 left-0 w-full p-6 z-30 bg-gradient-to-t from-surface via-surface/90 to-transparent flex justify-center">
+        <button 
+          onClick={() => setShowVibeCheck(true)}
+          className="w-full max-w-md bg-gradient-to-r from-primary to-primary-container text-on-primary-fixed font-bold font-headline py-5 rounded-3xl text-lg tracking-tight flex items-center justify-center gap-3 shadow-[0_15px_30px_rgba(241,131,255,0.3)] hover:opacity-90 active:scale-[0.98] transition-all"
+        >
+          Check In Vibe & Start Date
+          <span className="material-symbols-outlined">arrow_forward</span>
+        </button>
       </div>
+
+      {/* Vibe Check sliding Drawer Overlay */}
+      {showVibeCheck && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex justify-center items-end">
+          <div className="bg-surface border-t border-outline-variant/20 rounded-t-[2.5rem] w-full max-w-lg p-6 space-y-8 animate-slide-up shadow-2xl relative">
+            
+            {/* Generating pacer animation spinner overlay */}
+            {generating && (
+              <div className="absolute inset-0 bg-surface/90 rounded-t-[2.5rem] z-55 flex flex-col items-center justify-center space-y-6 px-8 text-center">
+                <div className="relative w-40 h-40 flex items-center justify-center">
+                  <div className="absolute w-32 h-32 rounded-full border border-primary/20 animate-ping"></div>
+                  <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center">
+                    <span className="material-symbols-outlined text-4xl text-primary animate-pulse">spa</span>
+                  </div>
+                </div>
+                <h3 className="font-headline text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary-container">
+                  Calming Nervous Systems
+                </h3>
+                <p className="text-on-surface-variant text-sm leading-relaxed max-w-xs">
+                  Guide is aligning Brakes and Accelerators. Please take a deep breath together...
+                </p>
+              </div>
+            )}
+
+            {/* Header */}
+            <div className="flex justify-between items-center">
+              <button 
+                onClick={() => setShowVibeCheck(false)}
+                className="text-on-surface-variant hover:text-primary p-2"
+              >
+                <span className="material-symbols-outlined">close</span>
+              </button>
+              <h3 className="font-headline font-bold text-lg text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary-container">
+                The Vibe Check
+              </h3>
+              <div className="w-10"></div>
+            </div>
+
+            {/* Sliders */}
+            <div className="space-y-6">
+              <div className="space-y-3">
+                <div className="flex justify-between items-center text-sm font-label">
+                  <span>Physical Energy</span>
+                  <span className="text-secondary font-bold">{physicalEnergy}%</span>
+                </div>
+                <input 
+                  type="range" 
+                  min="10" 
+                  max="100" 
+                  value={physicalEnergy} 
+                  onChange={(e) => setPhysicalEnergy(Number(e.target.value))}
+                  className="w-full h-1.5 bg-surface-container-highest rounded-lg appearance-none cursor-pointer accent-primary"
+                />
+                <div className="flex justify-between text-[10px] text-on-surface-variant/60 uppercase tracking-widest">
+                  <span>Restful</span>
+                  <span>Dynamic</span>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <div className="flex justify-between items-center text-sm font-label">
+                  <span>Emotional Capacity</span>
+                  <span className="text-primary font-bold">{emotionalCapacity}%</span>
+                </div>
+                <input 
+                  type="range" 
+                  min="10" 
+                  max="100" 
+                  value={emotionalCapacity} 
+                  onChange={(e) => setEmotionalCapacity(Number(e.target.value))}
+                  className="w-full h-1.5 bg-surface-container-highest rounded-lg appearance-none cursor-pointer accent-primary"
+                />
+                <div className="flex justify-between text-[10px] text-on-surface-variant/60 uppercase tracking-widest">
+                  <span>Delicate</span>
+                  <span>Expansive</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Duration */}
+            <div className="space-y-3">
+              <h4 className="font-headline font-bold text-sm tracking-tight">Duration</h4>
+              <div className="bg-surface-container-lowest p-1 rounded-full flex outline outline-1 outline-outline-variant/25">
+                {[15, 30, 45].map(d => (
+                  <button 
+                    key={d}
+                    onClick={() => setDuration(d)}
+                    className={`flex-1 py-2.5 text-xs font-bold rounded-full transition-all ${
+                      duration === d 
+                        ? 'bg-secondary text-on-secondary shadow-md' 
+                        : 'text-on-surface-variant hover:text-on-surface'
+                    }`}
+                  >
+                    {d}m
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Focus Elements */}
+            <div className="space-y-3">
+              <h4 className="font-headline font-bold text-sm tracking-tight">Focus Element</h4>
+              <div className="flex gap-2">
+                {(['Somatic', 'Verbal', 'Breathing'] as const).map(item => (
+                  <button 
+                    key={item}
+                    onClick={() => setFocusElement(item)}
+                    className={`flex-1 py-3 px-4 rounded-full border text-xs font-bold transition-all flex items-center justify-center space-x-1.5 ${
+                      focusElement === item 
+                        ? 'bg-primary-dim text-on-primary border-primary shadow-lg' 
+                        : 'bg-surface-container-high text-on-surface-variant border-outline-variant/10 hover:text-on-surface'
+                    }`}
+                  >
+                    <span className="material-symbols-outlined text-[1rem]">
+                      {item === 'Somatic' ? 'self_improvement' : item === 'Verbal' ? 'forum' : 'air'}
+                    </span>
+                    <span>{item}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Start CTA */}
+            <button 
+              onClick={handleStartSession}
+              className="w-full bg-gradient-to-r from-primary to-primary-container text-on-primary-fixed font-bold py-4 rounded-2xl shadow-lg hover:opacity-90 active:scale-95 transition-all"
+            >
+              Begin Curated Session
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
