@@ -11,7 +11,12 @@ const PORT = process.env.PORT || 3001;
 
 // CORS setup: Restrict to trusted origins
 const corsOptions = {
-  origin: ['http://localhost:3000', 'http://localhost:5173'], // standard react and vite dev servers
+  origin: [
+    'http://localhost:3000', 
+    'http://localhost:3001', 
+    'http://localhost:5173', 
+    'https://versa-v1-1.onrender.com'
+  ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization']
 };
