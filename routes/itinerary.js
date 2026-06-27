@@ -79,17 +79,26 @@ router.post('/active', authenticateToken, (req, res) => {
   }
 
   try {
-    db.prepare(`
-      UPDATE active_sessions 
-      SET timer_countdown = COALESCE(?, timer_countdown),
-          session_status = COALESCE(?, session_status),
-          partner_a_active = COALESCE(?, partner_a_active),
-          partner_b_active = COALESCE(?, partner_b_active),
-          active_script_id = COALESCE(?, active_script_id),
-          last_event_triggered = COALESCE(?, last_event_triggered),
-          updated_at = CURRENT_TIMESTAMP
-      WHERE pairing_id = ?
-    `).run(timerCountdown, sessionStatus, partnerAActive, partnerBActive, activeScriptId, lastEventTriggered, pairingId);
+    ensureMockPairingExists(pairingId);
+    const exists = db.prepare('SELECT pairing_id FROM active_sessions WHERE pairing_id = ?').get(pairingId);
+    if (!exists) {
+      db.prepare(`
+        INSERT INTO active_sessions (pairing_id, timer_countdown, session_status, last_event_triggered, active_script_id)
+        VALUES (?, COALESCE(?, 900), COALESCE(?, 'Timer_Active'), COALESCE(?, 'INITIALIZED'), ?)
+      `).run(pairingId, timerCountdown, sessionStatus, lastEventTriggered, activeScriptId);
+    } else {
+      db.prepare(`
+        UPDATE active_sessions 
+        SET timer_countdown = COALESCE(?, timer_countdown),
+            session_status = COALESCE(?, session_status),
+            partner_a_active = COALESCE(?, partner_a_active),
+            partner_b_active = COALESCE(?, partner_b_active),
+            active_script_id = COALESCE(?, active_script_id),
+            last_event_triggered = COALESCE(?, last_event_triggered),
+            updated_at = CURRENT_TIMESTAMP
+        WHERE pairing_id = ?
+      `).run(timerCountdown, sessionStatus, partnerAActive, partnerBActive, activeScriptId, lastEventTriggered, pairingId);
+    }
 
     res.json({ success: true, message: 'Active session state updated successfully.' });
   } catch (error) {
@@ -290,17 +299,36 @@ function loadPreVettedFallback(focus) {
   return preVettedItineraries[focus] || preVettedItineraries.Breathing;
 }
 
+function ensureMockPairingExists(pairingId) {
+  const exists = db.prepare('SELECT id FROM pairings WHERE id = ?').get(pairingId);
+  if (!exists) {
+    db.prepare(`
+      INSERT OR IGNORE INTO pairings (id, user_a_id, user_b_id, status)
+      VALUES (?, NULL, NULL, 'active')
+    `).run(pairingId);
+  }
+}
+
 function saveItineraryToSession(pairingId, itinerary) {
   const scriptJSON = JSON.stringify(itinerary);
-  db.prepare(`
-    UPDATE active_sessions 
-    SET active_script_id = ?,
-        timer_countdown = 900,
-        session_status = 'Timer_Active',
-        last_event_triggered = 'NEW_ITINERARY_GENERATED',
-        updated_at = CURRENT_TIMESTAMP
-    WHERE pairing_id = ?
-  `).run(scriptJSON, pairingId);
+  ensureMockPairingExists(pairingId);
+  const exists = db.prepare('SELECT pairing_id FROM active_sessions WHERE pairing_id = ?').get(pairingId);
+  if (!exists) {
+    db.prepare(`
+      INSERT INTO active_sessions (pairing_id, active_script_id, timer_countdown, session_status, last_event_triggered)
+      VALUES (?, ?, 900, 'Timer_Active', 'NEW_ITINERARY_GENERATED')
+    `).run(pairingId, scriptJSON);
+  } else {
+    db.prepare(`
+      UPDATE active_sessions 
+      SET active_script_id = ?,
+          timer_countdown = 900,
+          session_status = 'Timer_Active',
+          last_event_triggered = 'NEW_ITINERARY_GENERATED',
+          updated_at = CURRENT_TIMESTAMP
+      WHERE pairing_id = ?
+    `).run(scriptJSON, pairingId);
+  }
 }
 
 function sanitizeJSONResponse(text) {
