@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { submitRegistration, submitLogin } from '../api';
+import logoImg from '../assets/Logo_1.png';
 
 const Register: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -76,7 +77,7 @@ const Register: React.FC = () => {
             <img
               alt="Versa Logo"
               className="h-20 w-20 object-contain mx-auto mb-4 drop-shadow-2xl rounded-2xl"
-              src="/src/assets/Logo_1.png"
+              src={logoImg}
             />
           </div>
 

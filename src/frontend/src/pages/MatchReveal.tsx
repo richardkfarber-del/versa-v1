@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../api';
+import logoImg from '../assets/Logo_1.png';
 
 interface Match {
   category: string;
@@ -349,7 +350,7 @@ const MatchReveal: React.FC = () => {
           <div className="w-8"></div>
           <div className="flex items-center gap-2">
             <img 
-              src="/src/assets/Logo_1.png" 
+              src={logoImg} 
               alt="Versa Logo" 
               className="w-8 h-8 object-contain rounded-md"
             />
