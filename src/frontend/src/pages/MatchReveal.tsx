@@ -18,24 +18,37 @@ interface Product {
   redirectUrl: string;
 }
 
+interface Pairing {
+  id: string;
+  inviteCode: string;
+  status: 'pending' | 'active' | 'disconnected';
+  partnerEmail: string | null;
+  partnerCompassCompleted: number;
+}
+
 const MatchReveal: React.FC = () => {
   const navigate = useNavigate();
   const [matches] = useState<Match[]>([
     { category: 'Deep Conversation', description: 'Explore the unsaid with guided prompts for intimacy.', icon: 'forum', color: 'secondary' },
-    { category: '15-Minute Massage', description: 'A gentle tactile exchange to release physical tension.', icon: 'self_care', color: 'primary' },
+    { category: '15-Minute Massage', description: 'A gentle tactile exchange to release physical tension.', icon: 'self_improvement', color: 'primary' },
     { category: 'Slow Breathwork', description: 'Synchronized breathing to align your nervous systems.', icon: 'air', color: 'tertiary' }
   ]);
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
-  const [, setLoading] = useState(true);
-  
+
+  // Pairing & empty states
+  const [pairing, setPairing] = useState<Pairing | null>(null);
+  const [inviteInput, setInviteInput] = useState('');
+  const [nudgeStatus, setNudgeStatus] = useState<string | null>(null);
+  const [showSettingsDrawer, setShowSettingsDrawer] = useState(false);
+
   // Vibe Check drawer states
   const [showVibeCheck, setShowVibeCheck] = useState(false);
   const [physicalEnergy, setPhysicalEnergy] = useState(75);
   const [emotionalCapacity, setEmotionalCapacity] = useState(50);
   const [duration, setDuration] = useState(15);
   const [focusElement, setFocusElement] = useState<'Somatic' | 'Verbal' | 'Breathing'>('Somatic');
-  
+
   // LLM itinerary generation task states
   const [generating, setGenerating] = useState(false);
   const [itineraryTaskId, setItineraryTaskId] = useState<string | null>(null);
@@ -43,9 +56,32 @@ const MatchReveal: React.FC = () => {
   const token = localStorage.getItem('versa_token');
   const pairingId = localStorage.getItem('versa_pairing_id') || 'pairing-123-uuid';
 
+  const fetchPairingStatus = async () => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/v1/relationship/pairing-status`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success) {
+          setPairing(data.pairing);
+          if (data.pairing && data.pairing.id) {
+            localStorage.setItem('versa_pairing_id', data.pairing.id);
+          }
+        }
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchPairingStatus();
+  }, [token]);
+
   useEffect(() => {
     // Fetch products curated for their overlapping desires
-    const fetchData = async () => {
+    const fetchProducts = async () => {
       try {
         const prodRes = await fetch(`${API_BASE_URL}/v1/products/recommend/${pairingId}`, {
           headers: { 'Authorization': `Bearer ${token}` }
@@ -58,12 +94,12 @@ const MatchReveal: React.FC = () => {
         }
       } catch (err) {
         console.error('Failed to load products:', err);
-      } finally {
-        setLoading(false);
       }
     };
-    fetchData();
-  }, [pairingId, token]);
+    if (pairing && pairing.status === 'active' && pairing.partnerCompassCompleted === 1) {
+      fetchProducts();
+    }
+  }, [pairingId, token, pairing]);
 
   // Polling for generative itinerary task completion
   useEffect(() => {
@@ -78,7 +114,7 @@ const MatchReveal: React.FC = () => {
         });
         if (!response.ok) throw new Error('Polling failed');
         const data = await response.json();
-        
+
         if (data.success && data.task) {
           const { status } = data.task;
           if (status === 'completed') {
@@ -86,7 +122,6 @@ const MatchReveal: React.FC = () => {
             setItineraryTaskId(null);
             setGenerating(false);
             setShowVibeCheck(false);
-            // Navigate to active date player
             navigate('/date');
           } else if (status === 'error') {
             clearInterval(intervalId);
@@ -134,15 +169,184 @@ const MatchReveal: React.FC = () => {
     } catch (err) {
       console.error(err);
       setGenerating(false);
-      navigate('/date'); // go to date as fallback
+      navigate('/date');
     }
   };
 
+  const handleLinkInvite = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!inviteInput.trim()) return;
+    try {
+      const res = await fetch(`${API_BASE_URL}/v1/relationship/link`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ inviteCode: inviteInput.trim() })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setInviteInput('');
+        fetchPairingStatus();
+      } else {
+        alert(data.error || 'Failed to link accounts.');
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleNudgePartner = async () => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/v1/relationship/nudge`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        setNudgeStatus('Warm Nudge sent successfully!');
+        setTimeout(() => setNudgeStatus(null), 3000);
+      } else {
+        setNudgeStatus('Nudge failed to send. Partner offline.');
+        setTimeout(() => setNudgeStatus(null), 3000);
+      }
+    } catch (err) {
+      setNudgeStatus('Nudge failed. Please try again.');
+      setTimeout(() => setNudgeStatus(null), 3000);
+    }
+  };
+
+  const handleUnlink = async () => {
+    if (!pairing) return;
+    const confirm = window.confirm('Are you absolutely sure you want to sever your pairing connection? This will purge all shared calendar events and active practices.');
+    if (!confirm) return;
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/v1/relationship/unlink`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ pairingId: pairing.id })
+      });
+      if (res.ok) {
+        localStorage.removeItem('versa_token');
+        localStorage.removeItem('versa_pairing_id');
+        localStorage.removeItem('versa_user_email');
+        navigate('/');
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // 1. EMPTY STATE: Waiting for Partner pairing invitation
+  if (!pairing || pairing.status === 'pending') {
+    return (
+      <div className="bg-[#0e0e0e] text-[#fcf9f8] min-h-screen flex items-center justify-center font-body px-6 select-none">
+        <div className="bg-[#131313] p-8 rounded-[2.5rem] border border-outline-variant/10 shadow-2xl w-full max-w-sm space-y-8">
+          <div className="text-center space-y-3">
+            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto border border-primary/20">
+              <span className="material-symbols-outlined text-[#f183ff] text-3xl">favorite</span>
+            </div>
+            <h2 className="font-headline font-bold text-2xl text-slate-100">Intimacy Sanctuary</h2>
+            <p className="text-xs text-on-surface-variant leading-relaxed">
+              Connect your partner's account to share accelerators, schedules, and nervous system pacer guides.
+            </p>
+          </div>
+
+          <div className="p-4 rounded-2xl bg-[#000000] border border-outline-variant/10 text-center space-y-2">
+            <span className="text-[10px] uppercase tracking-wider text-[#767575] font-label">Your Invite Code</span>
+            <div className="text-xl font-headline font-bold text-[#ff9800] tracking-widest">{pairing ? pairing.inviteCode : '...'}</div>
+            <button
+              onClick={() => {
+                if (pairing) {
+                  navigator.clipboard.writeText(pairing.inviteCode);
+                  alert('Invite code copied to clipboard!');
+                }
+              }}
+              className="text-[10px] font-bold text-primary hover:opacity-80 active:scale-95"
+            >
+              Copy Invite Code
+            </button>
+          </div>
+
+          <form onSubmit={handleLinkInvite} className="space-y-4 pt-4 border-t border-outline-variant/5">
+            <div className="space-y-1">
+              <label className="text-[10px] uppercase tracking-wider font-label text-[#767575]">Enter Partner's Code</label>
+              <input
+                type="text"
+                value={inviteInput}
+                onChange={e => setInviteInput(e.target.value)}
+                className="w-full bg-[#000000] border border-outline-variant/10 focus:border-primary/50 text-sm font-semibold rounded-2xl px-4 py-3 text-slate-200 outline-none transition-colors text-center uppercase tracking-widest"
+                placeholder="ABCDEF"
+                maxLength={6}
+                required
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="w-full py-4 rounded-3xl bg-gradient-to-r from-primary to-primary-container text-white font-bold text-sm tracking-wide active:scale-[0.98] transition-all"
+            >
+              Link Partner Account
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
+  // 2. EMPTY STATE: Partner has not completed Connection Compass intake quiz
+  if (pairing.status === 'active' && pairing.partnerCompassCompleted === 0) {
+    return (
+      <div className="bg-[#0e0e0e] text-[#fcf9f8] min-h-screen flex items-center justify-center font-body px-6 select-none">
+        <div className="bg-[#131313] p-8 rounded-[2.5rem] border border-outline-variant/10 shadow-2xl w-full max-w-sm space-y-6 text-center">
+          <div className="w-16 h-16 rounded-full bg-secondary/10 flex items-center justify-center mx-auto border border-secondary/20">
+            <span className="material-symbols-outlined text-[#ff9800] text-3xl">hourglass_empty</span>
+          </div>
+
+          <div className="space-y-2">
+            <h2 className="font-headline font-bold text-xl text-slate-100">Aligning Accelerators</h2>
+            <p className="text-xs text-on-surface-variant leading-relaxed px-2">
+              Your account is successfully linked with <span className="font-semibold text-slate-300">{pairing.partnerEmail}</span>. We are waiting for them to complete their Connection Compass onboarding chat.
+            </p>
+          </div>
+
+          {nudgeStatus && (
+            <div className="bg-primary/10 border border-primary/20 text-[#f183ff] text-xs font-semibold p-3 rounded-xl">
+              {nudgeStatus}
+            </div>
+          )}
+
+          <div className="space-y-3 pt-4 border-t border-outline-variant/5">
+            <button
+              onClick={handleNudgePartner}
+              className="w-full py-4 rounded-3xl bg-gradient-to-r from-primary to-primary-container text-white font-bold text-sm tracking-wide shadow-lg active:scale-[0.98] transition-all"
+            >
+              Nudge Partner
+            </button>
+            <button
+              onClick={handleUnlink}
+              className="w-full py-3 rounded-3xl text-on-surface-variant hover:text-error text-xs font-semibold transition-colors"
+            >
+              Cancel Link / Sever Connection
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // 3. STANDARD STATE: Both partners linked and completed onboarding
   return (
     <div className="bg-surface text-on-surface font-body min-h-screen relative antialiased select-none pb-28">
       {/* TopAppBar */}
       <header className="fixed top-0 w-full z-40 bg-surface/80 backdrop-blur-xl border-b border-outline-variant/10">
-        <div className="flex items-center justify-center px-6 h-16 w-full">
+        <div className="flex items-center justify-between px-6 h-16 w-full max-w-lg mx-auto">
+          <div className="w-8"></div>
           <div className="flex items-center gap-2">
             <img 
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrvmj9fE8wymT5lgT3LS-1I4tErKwpKlcZZuBgCtk4uUqeqJUROyAn248BClzDQ4WiWQNsUuKA0ARQj5N1rlYYBIBTJFlbVQOgKk7ssUajQdcgft3WfNInH_cstvFo8Z1t736NVFdm33kSYq3d8aCaFb2HpGR8Y4DSf5Xfjcxjom-cP04c0gupbVoRMpRPIwQGKcVlElt1TdH9ZrHLHnB0hWT7XO4qntCiX9borKuvuxlTIfWS03Qee_G58IWo0ZPhlTmh7FsypTg" 
@@ -153,6 +357,12 @@ const MatchReveal: React.FC = () => {
               Versa
             </h1>
           </div>
+          <button 
+            onClick={() => setShowSettingsDrawer(true)} 
+            className="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-transform"
+          >
+            <span className="material-symbols-outlined">settings</span>
+          </button>
         </div>
       </header>
 
@@ -206,11 +416,9 @@ const MatchReveal: React.FC = () => {
                   className="rounded-[2rem] bg-surface-container-low p-6 flex flex-col md:flex-row gap-8 items-center relative overflow-hidden border border-outline-variant/10 shadow-[0_20px_40px_rgba(0,0,0,0.4)]"
                 >
                   <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
-                  {/* Image placeholder / frame */}
                   <div className="w-full md:w-48 h-48 rounded-2xl overflow-hidden relative shadow-lg bg-surface-container-high flex items-center justify-center">
                     <span className="material-symbols-outlined text-4xl text-primary/40">shopping_bag</span>
                   </div>
-                  {/* Details */}
                   <div className="flex-1 space-y-4 text-center md:text-left">
                     <div>
                       <span className="font-label text-xs uppercase tracking-widest text-on-surface-variant">{prod.brand}</span>
@@ -240,7 +448,7 @@ const MatchReveal: React.FC = () => {
       <div className="fixed bottom-[76px] left-0 right-0 max-w-lg mx-auto p-4 z-30 bg-gradient-to-t from-[#0e0e0e] via-[#0e0e0e]/95 to-transparent flex justify-center">
         <button 
           onClick={() => setShowVibeCheck(true)}
-          className="w-full bg-gradient-to-r from-primary to-primary-container text-on-primary-fixed font-bold font-headline py-4 rounded-3xl text-base tracking-tight flex items-center justify-center gap-3 shadow-[0_15px_30px_rgba(241,131,255,0.3)] hover:opacity-90 active:scale-[0.98] transition-all"
+          className="w-full bg-gradient-to-r from-primary to-primary-container text-white font-bold font-headline py-4 rounded-3xl text-base tracking-tight flex items-center justify-center gap-3 shadow-[0_15px_30px_rgba(241,131,255,0.3)] hover:opacity-90 active:scale-[0.98] transition-all"
         >
           Check In Vibe & Start Date
           <span className="material-symbols-outlined">arrow_forward</span>
@@ -251,8 +459,6 @@ const MatchReveal: React.FC = () => {
       {showVibeCheck && (
         <div className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex justify-center items-end">
           <div className="bg-surface border-t border-outline-variant/20 rounded-t-[2.5rem] w-full max-w-lg p-6 space-y-8 animate-slide-up shadow-2xl relative">
-            
-            {/* Generating pacer animation spinner overlay */}
             {generating && (
               <div className="absolute inset-0 bg-surface/90 rounded-t-[2.5rem] z-[70] flex flex-col items-center justify-center space-y-6 px-8 text-center">
                 <div className="relative w-40 h-40 flex items-center justify-center">
@@ -270,12 +476,8 @@ const MatchReveal: React.FC = () => {
               </div>
             )}
 
-            {/* Header */}
             <div className="flex justify-between items-center">
-              <button 
-                onClick={() => setShowVibeCheck(false)}
-                className="text-on-surface-variant hover:text-primary p-2"
-              >
+              <button onClick={() => setShowVibeCheck(false)} className="text-on-surface-variant hover:text-primary p-2">
                 <span className="material-symbols-outlined">close</span>
               </button>
               <h3 className="font-headline font-bold text-lg text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary-container">
@@ -284,7 +486,6 @@ const MatchReveal: React.FC = () => {
               <div className="w-10"></div>
             </div>
 
-            {/* Sliders */}
             <div className="space-y-6">
               <div className="space-y-3">
                 <div className="flex justify-between items-center text-sm font-label">
@@ -299,10 +500,6 @@ const MatchReveal: React.FC = () => {
                   onChange={(e) => setPhysicalEnergy(Number(e.target.value))}
                   className="w-full h-1.5 bg-surface-container-highest rounded-lg appearance-none cursor-pointer accent-primary"
                 />
-                <div className="flex justify-between text-[10px] text-on-surface-variant/60 uppercase tracking-widest">
-                  <span>Restful</span>
-                  <span>Dynamic</span>
-                </div>
               </div>
 
               <div className="space-y-3">
@@ -318,14 +515,9 @@ const MatchReveal: React.FC = () => {
                   onChange={(e) => setEmotionalCapacity(Number(e.target.value))}
                   className="w-full h-1.5 bg-surface-container-highest rounded-lg appearance-none cursor-pointer accent-primary"
                 />
-                <div className="flex justify-between text-[10px] text-on-surface-variant/60 uppercase tracking-widest">
-                  <span>Delicate</span>
-                  <span>Expansive</span>
-                </div>
               </div>
             </div>
 
-            {/* Duration */}
             <div className="space-y-3">
               <h4 className="font-headline font-bold text-sm tracking-tight">Duration</h4>
               <div className="bg-surface-container-lowest p-1 rounded-full flex outline outline-1 outline-outline-variant/25">
@@ -345,7 +537,6 @@ const MatchReveal: React.FC = () => {
               </div>
             </div>
 
-            {/* Focus Elements */}
             <div className="space-y-3">
               <h4 className="font-headline font-bold text-sm tracking-tight">Focus Element</h4>
               <div className="flex gap-2">
@@ -368,10 +559,9 @@ const MatchReveal: React.FC = () => {
               </div>
             </div>
 
-            {/* Start CTA */}
             <button 
               onClick={handleStartSession}
-              className="w-full bg-gradient-to-r from-primary to-primary-container text-on-primary-fixed font-bold py-4 rounded-2xl shadow-lg hover:opacity-90 active:scale-95 transition-all"
+              className="w-full bg-gradient-to-r from-primary to-primary-container text-white font-bold py-4 rounded-2xl shadow-lg hover:opacity-90 active:scale-95 transition-all"
             >
               Begin Curated Session
             </button>
@@ -384,10 +574,7 @@ const MatchReveal: React.FC = () => {
         <div className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex justify-center items-end">
           <div className="bg-surface border-t border-outline-variant/20 rounded-t-[2.5rem] w-full max-w-lg p-6 space-y-6 animate-slide-up shadow-2xl relative">
             <div className="flex justify-between items-center">
-              <button 
-                onClick={() => setSelectedMatch(null)}
-                className="text-on-surface-variant hover:text-primary p-2"
-              >
+              <button onClick={() => setSelectedMatch(null)} className="text-on-surface-variant hover:text-primary p-2">
                 <span className="material-symbols-outlined">close</span>
               </button>
               <h3 className="font-headline font-bold text-lg text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary-container">
@@ -432,6 +619,44 @@ const MatchReveal: React.FC = () => {
               className="w-full py-4 rounded-xl bg-surface-container-highest text-on-surface font-bold text-sm tracking-wide border border-outline-variant/25 transition-all hover:bg-surface-container-high"
             >
               Close Summary
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Settings Drawer (Unlinking Switch) */}
+      {showSettingsDrawer && (
+        <div className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex justify-center items-end">
+          <div className="bg-surface border-t border-outline-variant/20 rounded-t-[2.5rem] w-full max-w-lg p-6 space-y-6 animate-slide-up shadow-2xl relative">
+            <div className="flex justify-between items-center">
+              <button onClick={() => setShowSettingsDrawer(false)} className="text-on-surface-variant hover:text-primary p-2">
+                <span className="material-symbols-outlined">close</span>
+              </button>
+              <h3 className="font-headline font-bold text-lg text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary-container">
+                Sanctuary Settings
+              </h3>
+              <div className="w-10"></div>
+            </div>
+
+            <div className="space-y-4">
+              <div className="p-4 rounded-2xl bg-surface-container-high border border-outline-variant/10 text-center">
+                <span className="text-xs text-on-surface-variant font-label uppercase">Linked Partner</span>
+                <p className="text-sm font-semibold text-slate-200 mt-1">{pairing.partnerEmail}</p>
+              </div>
+
+              <div className="space-y-2">
+                <h4 className="font-label text-xs uppercase tracking-wider text-on-surface-variant/70">Sovereignty & Security</h4>
+                <p className="text-xs text-on-surface-variant leading-relaxed">
+                  Severing your connection triggers our Cryptographic Self-Destruct protocol. All shared calendar entries, active date histories, and preference matches will be wiped from our database immediately.
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={handleUnlink}
+              className="w-full py-4 rounded-3xl bg-error-dim hover:bg-red-700 text-on-error font-bold text-sm tracking-wide active:scale-[0.98] transition-all"
+            >
+              Sever Connection (Self-Destruct)
             </button>
           </div>
         </div>

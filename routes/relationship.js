@@ -154,25 +154,200 @@ router.get('/active-session/:pairing_id', authenticateToken, (req, res) => {
   }
 });
 
-// POST /api/v1/relationship/schedule
-router.post('/schedule', authenticateToken, (req, res) => {
-  const { pairingId, contentId, scheduledFor } = req.body;
+// POST /api/v1/relationship/nudge
+router.post('/nudge', authenticateToken, (req, res) => {
+  const userId = req.user.userId;
+  try {
+    const pairing = db.prepare(`
+      SELECT * FROM pairings 
+      WHERE (user_a_id = ? OR user_b_id = ?) AND status = 'active'
+    `).get(userId, userId);
 
-  if (!pairingId || !contentId || !scheduledFor) {
-    return res.status(400).json({ success: false, error: 'Missing scheduling properties.' });
+    if (!pairing) {
+      return res.status(400).json({ success: false, error: 'Cannot nudge. You are not actively paired.' });
+    }
+
+    const partnerId = pairing.user_a_id === userId ? pairing.user_b_id : pairing.user_a_id;
+    if (!partnerId) {
+      return res.status(400).json({ success: false, error: 'Partner has not accepted the invite yet.' });
+    }
+
+    const partnerUser = db.prepare('SELECT email, device_token FROM users WHERE id = ?').get(partnerId);
+    if (!partnerUser) {
+      return res.status(404).json({ success: false, error: 'Partner profile not found.' });
+    }
+
+    console.log(`[PUSH NOTICE] Warm nudge notification triggered to ${partnerUser.email} (token: ${partnerUser.device_token || 'N/A'})`);
+
+    res.json({ 
+      success: true, 
+      message: 'Warm nudge sent to your partner successfully.', 
+      nudgeSent: true 
+    });
+  } catch (error) {
+    console.error('Nudge error:', error.message);
+    res.status(500).json({ success: false, error: 'Internal Server Error.' });
+  }
+});
+
+// POST /api/v1/relationship/unlink
+router.post('/unlink', authenticateToken, (req, res) => {
+  const userId = req.user.userId;
+  const { pairingId } = req.body;
+
+  if (!pairingId) {
+    return res.status(400).json({ success: false, error: 'Pairing ID is required to sever connection.' });
   }
 
   try {
-    const scheduleId = uuidv4();
-    db.prepare(`
-      INSERT INTO scheduled_dates (id, pairing_id, content_id, scheduled_for, reminder_sent)
-      VALUES (?, ?, ?, ?, 0)
-    `).run(scheduleId, pairingId, contentId, scheduledFor);
+    const { executeSelfDestruct } = require('../database');
+    const { appendJournal } = require('./sync');
 
-    res.json({ success: true, message: 'Date scheduled successfully.', scheduleId });
+    executeSelfDestruct(pairingId);
+    appendJournal('UNLINK_PAIRING', { pairing_id: pairingId });
+
+    res.json({ success: true, message: 'Connection severed and all local records deleted successfully.' });
   } catch (error) {
-    console.error('Failed to schedule date:', error.message);
-    res.status(500).json({ success: false, error: 'Internal Server Error.' });
+    console.error('Failed to unlink connection:', error.message);
+    res.status(500).json({ success: false, error: 'Failed to complete unlinking protocol.' });
+  }
+});
+
+// GET /api/v1/relationship/pairing-status
+router.get('/pairing-status', authenticateToken, (req, res) => {
+  const userId = req.user.userId;
+  try {
+    let pairing = db.prepare(`
+      SELECT * FROM pairings 
+      WHERE (user_a_id = ? OR user_b_id = ?) AND status != 'disconnected'
+    `).get(userId, userId);
+
+    if (!pairing) {
+      const inviteCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+      const pairingId = uuidv4();
+      const salt = uuidv4();
+
+      db.prepare(`
+        INSERT INTO pairings (id, user_a_id, invite_code, status, shared_secret_salt) 
+        VALUES (?, ?, ?, 'pending', ?)
+      `).run(pairingId, userId, inviteCode, salt);
+
+      pairing = db.prepare('SELECT * FROM pairings WHERE id = ?').get(pairingId);
+    }
+
+    const partnerId = pairing.user_a_id === userId ? pairing.user_b_id : pairing.user_a_id;
+    let partnerCompassCompleted = 0;
+    let partnerEmail = null;
+
+    if (partnerId) {
+      const partner = db.prepare('SELECT email, compass_answers FROM users WHERE id = ?').get(partnerId);
+      if (partner) {
+        partnerEmail = partner.email;
+        partnerCompassCompleted = partner.compass_answers ? 1 : 0;
+      }
+    }
+
+    res.json({
+      success: true,
+      pairing: {
+        id: pairing.id,
+        inviteCode: pairing.invite_code,
+        status: pairing.status,
+        partnerEmail,
+        partnerCompassCompleted
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// GET /api/v1/relationship/calendar/events
+router.get('/calendar/events', authenticateToken, (req, res) => {
+  const userId = req.user.userId;
+  try {
+    const pairing = db.prepare(`
+      SELECT id FROM pairings 
+      WHERE (user_a_id = ? OR user_b_id = ?) AND status = 'active'
+    `).get(userId, userId);
+
+    if (!pairing) return res.json({ success: true, events: [] });
+
+    const events = db.prepare('SELECT * FROM calendar_events WHERE pairing_id = ?').all(pairing.id);
+    res.json({ success: true, events });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// POST /api/v1/relationship/calendar/propose
+router.post('/calendar/propose', authenticateToken, (req, res) => {
+  const userId = req.user.userId;
+  const { pairingId, itineraryId, scheduledTime } = req.body;
+
+  if (!pairingId || !itineraryId || !scheduledTime) {
+    return res.status(400).json({ success: false, error: 'Missing proposal parameters.' });
+  }
+
+  try {
+    const itinerary = db.prepare('SELECT is_premium FROM itineraries WHERE id = ?').get(itineraryId);
+    const user = db.prepare('SELECT is_premium FROM users WHERE id = ?').get(userId);
+
+    if (itinerary && itinerary.is_premium === 1 && (!user || user.is_premium === 0)) {
+      return res.status(403).json({ success: false, error: 'PAYWALL_TRIGGERED', message: 'Premium itinerary requires active subscription.' });
+    }
+
+    const eventId = uuidv4();
+    db.prepare(`
+      INSERT INTO calendar_events (id, pairing_id, itinerary_id, proposed_by, scheduled_time, status)
+      VALUES (?, ?, ?, ?, ?, 'Pending')
+    `).run(eventId, pairingId, itineraryId, userId, scheduledTime);
+
+    const { appendJournal } = require('./sync');
+    appendJournal('PROPOSE_EVENT', { id: eventId, pairing_id: pairingId, itinerary_id: itineraryId, proposed_by: userId, scheduled_time: scheduledTime, status: 'Pending' });
+
+    res.status(201).json({ success: true, eventId });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// POST /api/v1/relationship/calendar/respond
+router.post('/calendar/respond', authenticateToken, (req, res) => {
+  const userId = req.user.userId;
+  const { eventId, action } = req.body;
+
+  if (!eventId || !action) {
+    return res.status(400).json({ success: false, error: 'Missing response parameters.' });
+  }
+
+  try {
+    const event = db.prepare('SELECT * FROM calendar_events WHERE id = ?').get(eventId);
+    if (!event) return res.status(404).json({ success: false, error: 'Event not found.' });
+
+    const { appendJournal } = require('./sync');
+
+    if (action === 'Accept') {
+      db.prepare("UPDATE calendar_events SET status = 'Confirmed' WHERE id = ?").run(eventId);
+      appendJournal('UPDATE_EVENT_STATUS', { id: eventId, status: 'Confirmed' });
+      res.json({ success: true, message: 'Date accepted successfully.' });
+    } else {
+      db.prepare('DELETE FROM calendar_events WHERE id = ?').run(eventId);
+      appendJournal('DELETE_EVENT', { id: eventId });
+      res.json({ success: true, message: 'Date declined and event removed.' });
+    }
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// GET /api/v1/relationship/itineraries
+router.get('/itineraries', authenticateToken, (req, res) => {
+  try {
+    const list = db.prepare('SELECT * FROM itineraries').all();
+    res.json({ success: true, itineraries: list });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 

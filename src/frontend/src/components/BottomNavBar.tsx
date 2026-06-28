@@ -15,6 +15,7 @@ const BottomNavBar: React.FC = () => {
   const navItems = [
     { path: '/compass', label: 'Compass', icon: 'explore' },
     { path: '/match', label: 'Dashboard', icon: 'dashboard' },
+    { path: '/calendar', label: 'Calendar', icon: 'calendar_month' },
     { path: '/date', label: 'Practice', icon: 'spa' },
   ];
 

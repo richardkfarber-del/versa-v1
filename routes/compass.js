@@ -112,7 +112,38 @@ CRITICAL:
       llmResponseText = data.message.content;
     } catch (ollamaErr) {
       console.warn(`Local Ollama extraction failed (${ollamaErr.message}), routing to cloud fallback API...`);
-      llmResponseText = await runCloudFallbackLLM(systemPrompt, transcript);
+      try {
+        llmResponseText = await runCloudFallbackLLM(systemPrompt, transcript);
+      } catch (cloudErr) {
+        console.warn(`Cloud fallback failed: ${cloudErr.message}. Executing rule-based parsing engine fallback...`);
+        const lowerText = transcript.toLowerCase();
+        const accelerators = [];
+        const boundaries = [];
+        const brakes = [];
+        
+        if (lowerText.includes('massage') || lowerText.includes('touch') || lowerText.includes('somatic')) {
+          accelerators.push('massage');
+        }
+        if (lowerText.includes('conversation') || lowerText.includes('talk') || lowerText.includes('verbal')) {
+          accelerators.push('conversation');
+        }
+        if (lowerText.includes('breath') || lowerText.includes('calm') || lowerText.includes('regulation') || lowerText.includes('breathing')) {
+          accelerators.push('breathwork');
+        }
+        if (lowerText.includes('blindfold') || lowerText.includes('sensory restriction')) {
+          boundaries.push('blindfolds');
+        }
+        if (lowerText.includes('stress') || lowerText.includes('fatigue') || lowerText.includes('work')) {
+          brakes.push('fatigue');
+        }
+
+        llmResponseText = JSON.stringify({
+          brakes: brakes.length > 0 ? brakes : ['work fatigue'],
+          accelerators: accelerators.length > 0 ? accelerators : ['conversation', 'massage'],
+          boundaries: boundaries.length > 0 ? boundaries : [],
+          tone_preference: 'warm'
+        });
+      }
     }
 
     // 3. Clean and parse JSON response

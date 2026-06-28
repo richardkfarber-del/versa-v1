@@ -42,6 +42,8 @@ const compassRouter = require('./routes/compass');
 const itineraryRouter = require('./routes/itinerary');
 const feedbackRouter = require('./routes/feedback');
 const productsRouter = require('./routes/products');
+const { router: syncRouter, pullDatabase } = require('./routes/sync');
+const { router: adminRouter } = require('./routes/admin');
 
 // Mount Routes
 app.use('/api/v1/auth', authRouter);
@@ -50,6 +52,8 @@ app.use('/api/v1/compass', compassRouter);
 app.use('/api/v1/itinerary', itineraryRouter);
 app.use('/api/v1/feedback', feedbackRouter);
 app.use('/api/v1/products', productsRouter);
+app.use('/api/v1/sync', syncRouter);
+app.use('/api/v1/admin', adminRouter);
 
 // Global Error Handler
 app.use((err, req, res, next) => {
@@ -58,6 +62,11 @@ app.use((err, req, res, next) => {
 });
 
 // Start Server
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Versa Unified Backend running on http://0.0.0.0:${PORT}`);
-});
+(async () => {
+  // Execute startup sync check
+  await pullDatabase();
+  
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Versa Unified Backend running on http://0.0.0.0:${PORT}`);
+  });
+})();

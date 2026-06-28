@@ -19,6 +19,8 @@ db.exec(`
     public_key TEXT,
     compass_answers TEXT,
     tone_preference TEXT DEFAULT 'warm',
+    is_premium INTEGER DEFAULT 0,
+    device_token TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   );
 
@@ -64,7 +66,7 @@ db.exec(`
     connection_rating INTEGER CHECK(connection_rating >= 1 AND connection_rating <= 5),
     notes TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY(pairing_id) REFERENCES active_sessions(pairing_id) ON DELETE CASCADE,
+    FOREIGN KEY(pairing_id) REFERENCES pairings(id) ON DELETE CASCADE,
     FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
   );
 
@@ -86,7 +88,56 @@ db.exec(`
     is_active INTEGER DEFAULT 1,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   );
+
+  CREATE TABLE IF NOT EXISTS itineraries (
+    id TEXT PRIMARY KEY,
+    title TEXT NOT NULL,
+    description TEXT,
+    steps TEXT,
+    is_premium INTEGER DEFAULT 0,
+    tags TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  );
+
+  CREATE TABLE IF NOT EXISTS calendar_events (
+    id TEXT PRIMARY KEY,
+    pairing_id TEXT NOT NULL,
+    itinerary_id TEXT NOT NULL,
+    proposed_by TEXT NOT NULL,
+    scheduled_time TEXT NOT NULL,
+    status TEXT DEFAULT 'Pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(pairing_id) REFERENCES pairings(id) ON DELETE CASCADE
+  );
+
+  CREATE TABLE IF NOT EXISTS ai_cache (
+    id TEXT PRIMARY KEY,
+    input_hash TEXT NOT NULL UNIQUE,
+    prompt_type TEXT NOT NULL,
+    response_text TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    invalidated INTEGER DEFAULT 0
+  );
+
+  CREATE TABLE IF NOT EXISTS sync_metadata (
+    id TEXT PRIMARY KEY,
+    last_sync_time TIMESTAMP,
+    last_sync_status TEXT,
+    local_commit_hash TEXT,
+    remote_commit_hash TEXT
+  );
+
+  CREATE TABLE IF NOT EXISTS admins (
+    id TEXT PRIMARY KEY,
+    email TEXT NOT NULL UNIQUE,
+    password_hash TEXT NOT NULL,
+    role TEXT DEFAULT 'editor',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  );
 `);
+
+try { db.exec("ALTER TABLE users ADD COLUMN is_premium INTEGER DEFAULT 0"); } catch (e) {}
+try { db.exec("ALTER TABLE users ADD COLUMN device_token TEXT"); } catch (e) {}
 
 // Encryption keys
 const DATABASE_KEY = process.env.DATABASE_KEY || 'default_sec_db_key_32_characters';
@@ -163,9 +214,77 @@ if (productCount === 0) {
   console.log("Seeded default affiliate products.");
 }
 
+// Seed default intimacy itineraries
+const itineraryCount = db.prepare('SELECT COUNT(*) as count FROM itineraries').get().count;
+if (itineraryCount === 0) {
+  const seedItineraries = [
+    {
+      id: "itinerary-conversation",
+      title: "Deep Conversation",
+      description: "Explore the unsaid with guided prompts for intimacy.",
+      steps: JSON.stringify([
+        { step: 1, title: "Warmup Sharing", instructions: "Share one small stressor from your day and immediately let it go." },
+        { step: 2, title: "Vulnerable Inquiry", instructions: "Ask your partner: 'What is a soft boundary of mine that you appreciate?'" },
+        { step: 3, title: "Silent Appreciation", instructions: "Hold eye contact for 2 minutes without speaking." }
+      ]),
+      is_premium: 0,
+      tags: "verbal,low-energy,onboarding"
+    },
+    {
+      id: "itinerary-massage",
+      title: "15-Minute Massage",
+      description: "A gentle tactile exchange to release physical tension.",
+      steps: JSON.stringify([
+        { step: 1, title: "Shoulder Release", instructions: "Spend 5 minutes massaging your partner's shoulders with warm lavender oil." },
+        { step: 2, title: "Neck Release", instructions: "Spend 5 minutes focusing on the back of their neck using soft, circular strokes." },
+        { step: 3, title: "Gratitude Whisper", instructions: "Whisper one detail you love about their presence." }
+      ]),
+      is_premium: 1,
+      tags: "somatic,tactile,premium"
+    },
+    {
+      id: "itinerary-breathwork",
+      title: "Slow Breathwork",
+      description: "Synchronized breathing to align your nervous systems.",
+      steps: JSON.stringify([
+        { step: 1, title: "Align Postures", instructions: "Sit cross-legged facing each other, touching knees." },
+        { step: 2, title: "Synchronize Breath", instructions: "Breathe in for 4 seconds, hold for 4, exhale for 4. Match your partner's rhythm." },
+        { step: 3, title: "Co-Regulation Rest", instructions: "Place your hand on your partner's heart and close your eyes together." }
+      ]),
+      is_premium: 0,
+      tags: "breathing,calm,regulation"
+    }
+  ];
+
+  const insertItinerary = db.prepare('INSERT INTO itineraries (id, title, description, steps, is_premium, tags) VALUES (?, ?, ?, ?, ?, ?)');
+  seedItineraries.forEach(it => {
+    insertItinerary.run(it.id, it.title, it.description, it.steps, it.is_premium, it.tags);
+  });
+  console.log("Seeded default intimacy itineraries.");
+}
+
+// Self-destruct unlinking logic via pairings deletion (cascades automatically)
+function executeSelfDestruct(pairingId) {
+  try {
+    const deleteTx = db.transaction(() => {
+      // 1. Delete parent pairings row. ON DELETE CASCADE will handle active_sessions, calendar_events, afterglow_surveys, etc.
+      db.prepare('DELETE FROM pairings WHERE id = ?').run(pairingId);
+      // 2. Nullify pairing link details on the users
+      db.prepare("UPDATE users SET pairing_id = NULL WHERE pairing_id = ?").run(pairingId);
+    });
+    deleteTx();
+    console.log(`Self-Destruct pairing deletion cascade complete for pairing ID: ${pairingId}`);
+    return true;
+  } catch (error) {
+    console.error('Failed to complete self-destruct pairing unlinking:', error.message);
+    throw error;
+  }
+}
+
 module.exports = {
   db,
   encryptText,
   decryptText,
-  hashDesireTag
+  hashDesireTag,
+  executeSelfDestruct
 };

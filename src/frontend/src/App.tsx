@@ -5,11 +5,13 @@ import ConnectionCompass from './pages/ConnectionCompass';
 import MatchReveal from './pages/MatchReveal';
 import ActiveDateNight from './pages/ActiveDateNight';
 import Grounding from './pages/Grounding';
+import IntimacyCalendar from './pages/IntimacyCalendar';
+import AdminPortal from './pages/AdminPortal';
 import BottomNavBar from './components/BottomNavBar';
 
 const AppContent: React.FC = () => {
   const location = useLocation();
-  const showNav = location.pathname !== '/' && location.pathname !== '/grounding';
+  const showNav = location.pathname !== '/' && location.pathname !== '/grounding' && location.pathname !== '/admin';
 
   return (
     <div className="min-h-screen bg-[#0e0e0e] text-white">
@@ -19,6 +21,8 @@ const AppContent: React.FC = () => {
         <Route path="/match" element={<MatchReveal />} />
         <Route path="/date" element={<ActiveDateNight />} />
         <Route path="/grounding" element={<Grounding />} />
+        <Route path="/calendar" element={<IntimacyCalendar />} />
+        <Route path="/admin" element={<AdminPortal />} />
       </Routes>
       {showNav && <BottomNavBar />}
     </div>
