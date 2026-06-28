@@ -25,6 +25,7 @@ const MatchReveal: React.FC = () => {
     { category: '15-Minute Massage', description: 'A gentle tactile exchange to release physical tension.', icon: 'self_care', color: 'primary' },
     { category: 'Slow Breathwork', description: 'Synchronized breathing to align your nervous systems.', icon: 'air', color: 'tertiary' }
   ]);
+  const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [, setLoading] = useState(true);
   
@@ -169,7 +170,8 @@ const MatchReveal: React.FC = () => {
           {matches.map((match, index) => (
             <div 
               key={index} 
-              className="bg-surface-container-low rounded-2xl p-5 relative overflow-hidden group cursor-pointer hover:bg-surface-container-high transition-colors duration-300 border border-outline-variant/5"
+              onClick={() => setSelectedMatch(match)}
+              className="bg-surface-container-low rounded-2xl p-5 relative overflow-hidden group cursor-pointer hover:bg-surface-container-high border border-outline-variant/5 active:scale-[0.98] transition-all duration-300"
             >
               <div className="absolute -right-12 -top-12 w-32 h-32 bg-primary/10 rounded-full blur-2xl group-hover:bg-primary/20 transition-all duration-500"></div>
               <div className="flex items-start justify-between relative z-10">
@@ -372,6 +374,64 @@ const MatchReveal: React.FC = () => {
               className="w-full bg-gradient-to-r from-primary to-primary-container text-on-primary-fixed font-bold py-4 rounded-2xl shadow-lg hover:opacity-90 active:scale-95 transition-all"
             >
               Begin Curated Session
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Read-Only Connections Detail Drawer */}
+      {selectedMatch && (
+        <div className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex justify-center items-end">
+          <div className="bg-surface border-t border-outline-variant/20 rounded-t-[2.5rem] w-full max-w-lg p-6 space-y-6 animate-slide-up shadow-2xl relative">
+            <div className="flex justify-between items-center">
+              <button 
+                onClick={() => setSelectedMatch(null)}
+                className="text-on-surface-variant hover:text-primary p-2"
+              >
+                <span className="material-symbols-outlined">close</span>
+              </button>
+              <h3 className="font-headline font-bold text-lg text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary-container">
+                Connection Detail
+              </h3>
+              <div className="w-10"></div>
+            </div>
+
+            <div className="flex items-center space-x-4 p-4 rounded-2xl bg-surface-container-high border border-outline-variant/10">
+              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center border border-outline-variant/20">
+                <span className="material-symbols-outlined text-primary text-2xl">
+                  {selectedMatch.category === 'Deep Conversation' ? 'forum' : selectedMatch.category === '15-Minute Massage' ? 'self_improvement' : 'air'}
+                </span>
+              </div>
+              <div>
+                <h4 className="font-headline font-bold text-lg text-on-surface">{selectedMatch.category}</h4>
+                <p className="font-body text-xs text-on-surface-variant">Active Overlap Connection</p>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div className="space-y-1">
+                <h5 className="font-label text-xs uppercase tracking-wider text-on-surface-variant/70">Desire Summary</h5>
+                <p className="font-body text-sm text-on-surface leading-relaxed">{selectedMatch.description}</p>
+              </div>
+
+              <div className="space-y-1">
+                <h5 className="font-label text-xs uppercase tracking-wider text-on-surface-variant/70">What the Practice Entails</h5>
+                <p className="font-body text-sm text-on-surface leading-relaxed">
+                  {selectedMatch.category === 'Deep Conversation' && 
+                    'Guided deep vulnerability query exchange. Partners take turns asking and reflecting on thought-provoking prompts designed to lower defenses and uncover hidden facets of intimacy.'}
+                  {selectedMatch.category === '15-Minute Massage' && 
+                    'A structured, somatic tactile practice centered on nervous system regulation. Partners exchange slow, high-boundary-respecting physical touch focusing on areas of tension like the shoulders and neck.'}
+                  {selectedMatch.category === 'Slow Breathwork' && 
+                    'Synchronized breathing and co-regulation exercises. By aligning breathing paces and utilizing eye contact, partners reduce cortisol levels and establish deep physiological resonance.'}
+                </p>
+              </div>
+            </div>
+
+            <button 
+              onClick={() => setSelectedMatch(null)}
+              className="w-full py-4 rounded-xl bg-surface-container-highest text-on-surface font-bold text-sm tracking-wide border border-outline-variant/25 transition-all hover:bg-surface-container-high"
+            >
+              Close Summary
             </button>
           </div>
         </div>

@@ -216,7 +216,7 @@ const ActiveDateNight: React.FC = () => {
         </button>
       </header>
 
-      <main className="relative z-10 flex flex-col items-center justify-center min-h-screen px-6 pt-24 pb-32 max-w-lg mx-auto">
+      <main className="relative z-10 flex flex-col items-center justify-center min-h-screen px-6 pt-24 pb-48 max-w-lg mx-auto">
         <div className="text-center mb-8 h-28 flex flex-col justify-center">
           {currentStep ? (
             <>
@@ -271,7 +271,7 @@ const ActiveDateNight: React.FC = () => {
       </main>
 
       {/* Nav Controls */}
-      <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-50 flex items-center gap-6">
+      <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 flex items-center gap-6">
         <button 
           onClick={() => setCurrentStepIdx(prev => Math.max(0, prev - 1))}
           className="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface hover:bg-surface-container-highest transition-colors"

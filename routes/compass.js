@@ -150,7 +150,7 @@ CRITICAL:
 
 // Fallback cloud LLM router (Gemini API)
 async function runCloudFallbackLLM(systemPrompt, transcript) {
-  const geminiApiKey = process.env.GEMINI_API_KEY;
+  const geminiApiKey = process.env.GEMINI_API_KEY || process.env.SUPABASE_ANON_KEY;
   if (!geminiApiKey) {
     throw new Error('No cloud API key configured for fallback.');
   }

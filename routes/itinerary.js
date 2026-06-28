@@ -216,24 +216,24 @@ No markdown codeblocks, no conversational preamble. Strictly JSON.
     if (!isSafe) {
       console.warn("Boundary violation detected by post-processing scanner! Loading pre-vetted static fallback.");
       const fallback = loadPreVettedFallback(focus);
-      saveItineraryToSession(pairingId, fallback);
+      saveItineraryToSession(pairingId, fallback, duration);
       taskQueue.set(taskId, { status: 'completed', result: fallback, error: 'Boundary violation triggered safe fallback' });
     } else {
-      saveItineraryToSession(pairingId, itinerary);
+      saveItineraryToSession(pairingId, itinerary, duration);
       taskQueue.set(taskId, { status: 'completed', result: itinerary, error: null });
     }
 
   } catch (error) {
     console.error(`Date night generation task ${taskId} failed:`, error.message);
     const fallback = loadPreVettedFallback(focus);
-    saveItineraryToSession(pairingId, fallback);
+    saveItineraryToSession(pairingId, fallback, duration);
     taskQueue.set(taskId, { status: 'completed', result: fallback, error: `LLM error: ${error.message}. Fallback loaded.` });
   }
 }
 
 // Fallback cloud LLM
 async function runCloudFallbackLLM(systemPrompt) {
-  const geminiApiKey = process.env.GEMINI_API_KEY;
+  const geminiApiKey = process.env.GEMINI_API_KEY || process.env.SUPABASE_ANON_KEY;
   if (!geminiApiKey) {
     throw new Error('No cloud API key configured for fallback.');
   }
@@ -309,25 +309,27 @@ function ensureMockPairingExists(pairingId) {
   }
 }
 
-function saveItineraryToSession(pairingId, itinerary) {
+function saveItineraryToSession(pairingId, itinerary, durationMinutes) {
   const scriptJSON = JSON.stringify(itinerary);
   ensureMockPairingExists(pairingId);
+  const durationVal = parseInt(durationMinutes, 10);
+  const countdownSeconds = (!isNaN(durationVal) && durationVal > 0) ? durationVal * 60 : 900;
   const exists = db.prepare('SELECT pairing_id FROM active_sessions WHERE pairing_id = ?').get(pairingId);
   if (!exists) {
     db.prepare(`
       INSERT INTO active_sessions (pairing_id, active_script_id, timer_countdown, session_status, last_event_triggered)
-      VALUES (?, ?, 900, 'Timer_Active', 'NEW_ITINERARY_GENERATED')
-    `).run(pairingId, scriptJSON);
+      VALUES (?, ?, ?, 'Timer_Active', 'NEW_ITINERARY_GENERATED')
+    `).run(pairingId, scriptJSON, countdownSeconds);
   } else {
     db.prepare(`
       UPDATE active_sessions 
       SET active_script_id = ?,
-          timer_countdown = 900,
+          timer_countdown = ?,
           session_status = 'Timer_Active',
           last_event_triggered = 'NEW_ITINERARY_GENERATED',
           updated_at = CURRENT_TIMESTAMP
       WHERE pairing_id = ?
-    `).run(scriptJSON, pairingId);
+    `).run(scriptJSON, countdownSeconds, pairingId);
   }
 }
 
