@@ -21,6 +21,8 @@ db.exec(`
     tone_preference TEXT DEFAULT 'warm',
     is_premium INTEGER DEFAULT 0,
     device_token TEXT,
+    compass_step INTEGER DEFAULT 1,
+    compass_transcript TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   );
 
@@ -138,6 +140,8 @@ db.exec(`
 
 try { db.exec("ALTER TABLE users ADD COLUMN is_premium INTEGER DEFAULT 0"); } catch (e) {}
 try { db.exec("ALTER TABLE users ADD COLUMN device_token TEXT"); } catch (e) {}
+try { db.exec("ALTER TABLE users ADD COLUMN compass_step INTEGER DEFAULT 1"); } catch (e) {}
+try { db.exec("ALTER TABLE users ADD COLUMN compass_transcript TEXT"); } catch (e) {}
 
 // Encryption keys
 const DATABASE_KEY = process.env.DATABASE_KEY || 'default_sec_db_key_32_characters';
@@ -267,10 +271,18 @@ if (itineraryCount === 0) {
 function executeSelfDestruct(pairingId) {
   try {
     const deleteTx = db.transaction(() => {
-      // 1. Delete parent pairings row. ON DELETE CASCADE will handle active_sessions, calendar_events, afterglow_surveys, etc.
+      // 1. Retrieve the user IDs associated with this pairing before deletion
+      const pairing = db.prepare('SELECT user_a_id, user_b_id FROM pairings WHERE id = ?').get(pairingId);
+      
+      // 2. Delete parent pairings row. ON DELETE CASCADE handles active_sessions, etc.
       db.prepare('DELETE FROM pairings WHERE id = ?').run(pairingId);
-      // 2. Nullify pairing link details on the users
-      db.prepare("UPDATE users SET pairing_id = NULL WHERE pairing_id = ?").run(pairingId);
+      
+      // 3. Reset onboarding status for both partner users
+      if (pairing) {
+        const resetUser = db.prepare('UPDATE users SET compass_step = 1, compass_transcript = NULL, compass_answers = NULL WHERE id = ?');
+        if (pairing.user_a_id) resetUser.run(pairing.user_a_id);
+        if (pairing.user_b_id) resetUser.run(pairing.user_b_id);
+      }
     });
     deleteTx();
     console.log(`Self-Destruct pairing deletion cascade complete for pairing ID: ${pairingId}`);

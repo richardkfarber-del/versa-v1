@@ -16,14 +16,55 @@ router.post('/chat', authenticateToken, (req, res) => {
     return res.status(400).json({ success: false, error: 'Transcript content is required.' });
   }
 
-  const taskId = uuidv4();
-  taskQueue.set(taskId, { status: 'pending', result: null, error: null });
+  try {
+    const user = db.prepare('SELECT compass_step, compass_transcript FROM users WHERE id = ?').get(userId);
+    if (!user) {
+      return res.status(404).json({ success: false, error: 'User profile not found.' });
+    }
 
-  // Run async LLM extraction in background
-  runLLMExtraction(taskId, userId, transcript.trim());
+    const currentStep = user.compass_step || 1;
+    let accumulatedTranscript = user.compass_transcript || '';
 
-  // Return 202 Accepted immediately
-  res.status(202).json({ success: true, taskId });
+    // Append current turn
+    accumulatedTranscript = (accumulatedTranscript + '\n' + transcript.trim()).trim();
+
+    if (currentStep === 1) {
+      db.prepare('UPDATE users SET compass_step = 2, compass_transcript = ? WHERE id = ?')
+        .run(accumulatedTranscript, userId);
+
+      return res.json({
+        success: true,
+        isCompleted: false,
+        nextQuestion: "Thank you. Let's look at sensory elements next: Are you curious about temperature play (e.g. ice, warming massage candles)? And do you have any strict boundaries, such as sensory restriction or blindfolds, that we should always avoid?"
+      });
+    } else if (currentStep === 2) {
+      db.prepare('UPDATE users SET compass_step = 3, compass_transcript = ? WHERE id = ?')
+        .run(accumulatedTranscript, userId);
+
+      return res.json({
+        success: true,
+        isCompleted: false,
+        nextQuestion: "Understood. Lastly, let's explore timing and fatigue: Do you tend to feel tense after work and need physical touch to unwind? And do work stress and exhaustion ever feel like a brake to your intimacy?"
+      });
+    } else {
+      db.prepare('UPDATE users SET compass_step = 4, compass_transcript = ? WHERE id = ?')
+        .run(accumulatedTranscript, userId);
+
+      const taskId = uuidv4();
+      taskQueue.set(taskId, { status: 'pending', result: null, error: null });
+
+      runLLMExtraction(taskId, userId, accumulatedTranscript);
+
+      return res.status(202).json({
+        success: true,
+        isCompleted: true,
+        taskId
+      });
+    }
+  } catch (error) {
+    console.error('Compass chat step progression failure:', error.message);
+    res.status(500).json({ success: false, error: 'Internal Server Error.' });
+  }
 });
 
 // GET /api/v1/tasks/:id (Polling task status)
@@ -42,7 +83,7 @@ router.get('/tasks/:id', authenticateToken, (req, res) => {
 router.get('/profile', authenticateToken, (req, res) => {
   const userId = req.user.userId;
   try {
-    const user = db.prepare('SELECT compass_answers, tone_preference FROM users WHERE id = ?').get(userId);
+    const user = db.prepare('SELECT compass_answers, tone_preference, compass_step FROM users WHERE id = ?').get(userId);
     if (!user) {
       return res.status(404).json({ success: false, error: 'User not found.' });
     }
@@ -53,7 +94,8 @@ router.get('/profile', authenticateToken, (req, res) => {
       success: true,
       profile: {
         tonePreference: user.tone_preference,
-        compassAnswers: decryptedAnswers
+        compassAnswers: decryptedAnswers,
+        compassStep: user.compass_step || 1
       }
     });
   } catch (error) {

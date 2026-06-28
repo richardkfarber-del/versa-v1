@@ -33,6 +33,45 @@ const ConnectionCompass: React.FC = () => {
 
   const token = localStorage.getItem('versa_token');
 
+  // Fetch their current progress step on mount
+  useEffect(() => {
+    const fetchStep = async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}/v1/compass/profile`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success && data.profile) {
+            const step = data.profile.compassStep || 1;
+            if (step === 2) {
+              setMessages([
+                {
+                  id: 'init-1',
+                  sender: 'ai',
+                  text: "Welcome back. Let's look at sensory elements next: Are you curious about temperature play (e.g. ice, warming massage candles)? And do you have any strict boundaries, such as sensory restriction or blindfolds, that we should always avoid?",
+                  timestamp: new Date()
+                }
+              ]);
+            } else if (step === 3) {
+              setMessages([
+                {
+                  id: 'init-1',
+                  sender: 'ai',
+                  text: "Welcome back. Lastly, let's explore timing and fatigue: Do you tend to feel tense after work and need physical touch to unwind? And do work stress and exhaustion ever feel like a brake to your intimacy?",
+                  timestamp: new Date()
+                }
+              ]);
+            }
+          }
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchStep();
+  }, [token]);
+
   // Auto-scroll to bottom of chat
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -133,8 +172,18 @@ const ConnectionCompass: React.FC = () => {
       }
 
       const data = await response.json();
-      if (data.success && data.taskId) {
-        setPollingTaskId(data.taskId);
+      if (data.success) {
+        if (data.isCompleted) {
+          if (data.taskId) {
+            setPollingTaskId(data.taskId);
+          } else {
+            setIsTyping(false);
+            appendAIMessage("Thank you. We have completed your intake! Let's head to the dashboard.");
+          }
+        } else {
+          setIsTyping(false);
+          appendAIMessage(data.nextQuestion);
+        }
       } else {
         setIsTyping(false);
         appendAIMessage("I received your thoughts, but couldn't spawn the analysis engine. Please try again.");
