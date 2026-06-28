@@ -75,8 +75,8 @@ const Register: React.FC = () => {
             {/* The brand infinity logo */}
             <img
               alt="Versa Logo"
-              className="h-16 mx-auto mb-4 drop-shadow-2xl"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrvmj9fE8wymT5lgT3LS-1I4tErKwpKlcZZuBgCtk4uUqeqJUROyAn248BClzDQ4WiWQNsUuKA0ARQj5N1rlYYBIBTJFlbVQOgKk7ssUajQdcgft3WfNInH_cstvFo8Z1t736NVFdm33kSYq3d8aCaFb2HpGR8Y4DSf5Xfjcxjom-cP04c0gupbVoRMpRPIwQGKcVlElt1TdH9ZrHLHnB0hWT7XO4qntCiX9borKuvuxlTIfWS03Qee_G58IWo0ZPhlTmh7FsypTg"
+              className="h-20 w-20 object-contain mx-auto mb-4 drop-shadow-2xl rounded-2xl"
+              src="/src/assets/Logo_1.png"
             />
           </div>
 

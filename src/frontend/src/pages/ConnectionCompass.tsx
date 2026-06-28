@@ -74,7 +74,7 @@ const ConnectionCompass: React.FC = () => {
 
   // Auto-scroll to bottom of chat
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    chatEndRef.current?.scrollIntoView({ behavior: 'auto' });
   }, [messages, isTyping]);
 
   // Polling task queue for background AI analysis
@@ -204,9 +204,9 @@ const ConnectionCompass: React.FC = () => {
   };
 
   return (
-    <div className="bg-surface text-on-surface font-body h-screen w-full flex flex-col relative overflow-hidden antialiased select-none">
+    <div className="bg-surface text-on-surface font-body h-[100dvh] w-full flex flex-col relative overflow-hidden antialiased select-none">
       {/* TopAppBar */}
-      <header className="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl border-b border-outline-variant/10">
+      <header className="w-full z-50 bg-surface/80 backdrop-blur-xl border-b border-outline-variant/10 flex-shrink-0">
         <div className="flex items-center justify-between px-6 h-16 w-full">
           <button 
             onClick={() => navigate('/match')} 
@@ -217,9 +217,9 @@ const ConnectionCompass: React.FC = () => {
           
           <div className="flex items-center justify-center gap-2">
             <img 
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrvmj9fE8wymT5lgT3LS-1I4tErKwpKlcZZuBgCtk4uUqeqJUROyAn248BClzDQ4WiWQNsUuKA0ARQj5N1rlYYBIBTJFlbVQOgKk7ssUajQdcgft3WfNInH_cstvFo8Z1t736NVFdm33kSYq3d8aCaFb2HpGR8Y4DSf5Xfjcxjom-cP04c0gupbVoRMpRPIwQGKcVlElt1TdH9ZrHLHnB0hWT7XO4qntCiX9borKuvuxlTIfWS03Qee_G58IWo0ZPhlTmh7FsypTg" 
+              src="/src/assets/Logo_1.png" 
               alt="Versa Logo" 
-              className="w-7 h-7"
+              className="w-8 h-8 object-contain rounded-md"
             />
             <div className="flex flex-col items-start justify-center">
               <h1 className="font-headline font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary-container text-xl tracking-tight leading-none">
@@ -234,15 +234,13 @@ const ConnectionCompass: React.FC = () => {
             </div>
           </div>
 
-          <button className="w-8 h-8 rounded-full overflow-hidden border border-outline-variant/20 flex items-center justify-center">
-            <span className="material-symbols-outlined text-on-surface-variant flex items-center justify-center h-full">spa</span>
-          </button>
+          <div className="w-8"></div>
         </div>
       </header>
 
       {/* Chat Messages Panel */}
-      <main className="flex-grow overflow-y-auto no-scrollbar pt-20 pb-64 px-6 z-10 relative flex flex-col space-y-6">
-        <div className="text-center w-full my-4">
+      <main className="flex-1 overflow-y-auto no-scrollbar px-6 py-4 flex flex-col space-y-6">
+        <div className="text-center w-full my-2">
           <span className="text-xs font-label text-on-surface-variant/50 uppercase tracking-widest">
             Onboarding Sanctuary Chat
           </span>
@@ -255,7 +253,7 @@ const ConnectionCompass: React.FC = () => {
           >
             {msg.sender === 'ai' && (
               <div className="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center flex-shrink-0 shadow-[0_4px_12px_rgba(241,131,255,0.15)] overflow-hidden">
-                <span className="material-symbols-outlined text-primary text-sm">spa</span>
+                <span className="material-symbols-outlined text-primary text-sm">smart_toy</span>
               </div>
             )}
             
@@ -297,7 +295,7 @@ const ConnectionCompass: React.FC = () => {
       </main>
 
       {/* Floating Bottom Input Panel */}
-      <div className="fixed bottom-[76px] left-0 right-0 max-w-lg mx-auto z-40 bg-[#0e0e0e]/95 backdrop-blur-md pt-4 pb-2 px-4 rounded-t-xl border-t border-outline-variant/5">
+      <div className="w-full bg-[#0e0e0e]/95 pt-4 pb-6 px-4 border-t border-outline-variant/5 flex-shrink-0">
         {/* Quick Replies */}
         <div className="flex flex-wrap gap-2 mb-4 justify-start overflow-x-auto no-scrollbar max-w-lg mx-auto pl-2">
           <button 

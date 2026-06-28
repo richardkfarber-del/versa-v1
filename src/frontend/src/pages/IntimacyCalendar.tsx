@@ -204,9 +204,9 @@ const IntimacyCalendar: React.FC = () => {
         <div className="flex items-center justify-center px-6 h-16 w-full max-w-lg mx-auto">
           <div className="flex items-center gap-2">
             <img 
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrvmj9fE8wymT5lgT3LS-1I4tErKwpKlcZZuBgCtk4uUqeqJUROyAn248BClzDQ4WiWQNsUuKA0ARQj5N1rlYYBIBTJFlbVQOgKk7ssUajQdcgft3WfNInH_cstvFo8Z1t736NVFdm33kSYq3d8aCaFb2HpGR8Y4DSf5Xfjcxjom-cP04c0gupbVoRMpRPIwQGKcVlElt1TdH9ZrHLHnB0hWT7XO4qntCiX9borKuvuxlTIfWS03Qee_G58IWo0ZPhlTmh7FsypTg" 
+              src="/src/assets/Logo_1.png" 
               alt="Versa Logo" 
-              className="w-7 h-7"
+              className="w-8 h-8 object-contain rounded-md"
             />
             <span className="font-headline font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-[#f183ff] text-xl tracking-tight">
               Intimacy Calendar
