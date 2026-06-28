@@ -154,6 +154,41 @@ const ActiveDateNight: React.FC = () => {
     );
   }
 
+  if (!itinerary) {
+    return (
+      <div className="bg-surface text-on-surface font-body min-h-screen overflow-hidden relative select-none flex flex-col justify-center pb-28">
+        <header className="fixed top-0 z-50 w-full px-6 py-4 flex justify-center items-center bg-transparent backdrop-blur-xl bg-opacity-80 border-b border-outline-variant/10">
+          <div className="flex items-center gap-2">
+            <img 
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrvmj9fE8wymT5lgT3LS-1I4tErKwpKlcZZuBgCtk4uUqeqJUROyAn248BClzDQ4WiWQNsUuKA0ARQj5N1rlYYBIBTJFlbVQOgKk7ssUajQdcgft3WfNInH_cstvFo8Z1t736NVFdm33kSYq3d8aCaFb2HpGR8Y4DSf5Xfjcxjom-cP04c0gupbVoRMpRPIwQGKcVlElt1TdH9ZrHLHnB0hWT7XO4qntCiX9borKuvuxlTIfWS03Qee_G58IWo0ZPhlTmh7FsypTg" 
+              alt="Versa Logo" 
+              className="w-7 h-7"
+            />
+            <span className="text-xl font-bold tracking-tighter font-headline text-slate-200">
+              Active Practice
+            </span>
+          </div>
+        </header>
+
+        <main className="relative z-10 flex flex-col items-center justify-center px-8 pt-24 text-center max-w-sm mx-auto">
+          <div className="w-16 h-16 rounded-full bg-surface-container-high border border-outline/10 flex items-center justify-center mb-6">
+            <span className="material-symbols-outlined text-[#f183ff] text-3xl">spa</span>
+          </div>
+          <h2 className="font-headline text-2xl font-bold text-on-surface mb-2">No Active Session Yet</h2>
+          <p className="text-on-surface-variant text-sm font-body leading-relaxed mb-8">
+            You haven't checked in your energy levels or generated a curated practice script for tonight.
+          </p>
+          <button 
+            onClick={() => navigate('/match')} 
+            className="w-full py-4 rounded-full bg-gradient-to-r from-primary to-primary-container text-on-primary font-bold text-sm tracking-wide shadow-lg hover:opacity-90 active:scale-98 transition-all duration-200"
+          >
+            Check In Vibe
+          </button>
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-surface text-on-surface font-body min-h-screen overflow-hidden relative select-none">
       <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">

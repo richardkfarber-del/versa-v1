@@ -192,7 +192,7 @@ const ConnectionCompass: React.FC = () => {
       </header>
 
       {/* Chat Messages Panel */}
-      <main className="flex-grow overflow-y-auto no-scrollbar pt-20 pb-44 px-6 z-10 relative flex flex-col space-y-6">
+      <main className="flex-grow overflow-y-auto no-scrollbar pt-20 pb-64 px-6 z-10 relative flex flex-col space-y-6">
         <div className="text-center w-full my-4">
           <span className="text-xs font-label text-on-surface-variant/50 uppercase tracking-widest">
             Onboarding Sanctuary Chat
@@ -248,7 +248,7 @@ const ConnectionCompass: React.FC = () => {
       </main>
 
       {/* Floating Bottom Input Panel */}
-      <div className="fixed bottom-0 w-full z-40 bg-gradient-to-t from-surface via-surface/95 to-transparent pt-12 pb-6 px-4">
+      <div className="fixed bottom-[76px] left-0 right-0 max-w-lg mx-auto z-40 bg-[#0e0e0e]/95 backdrop-blur-md pt-4 pb-2 px-4 rounded-t-xl border-t border-outline-variant/5">
         {/* Quick Replies */}
         <div className="flex flex-wrap gap-2 mb-4 justify-start overflow-x-auto no-scrollbar max-w-lg mx-auto pl-2">
           <button 

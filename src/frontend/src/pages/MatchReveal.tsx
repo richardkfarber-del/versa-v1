@@ -141,10 +141,7 @@ const MatchReveal: React.FC = () => {
     <div className="bg-surface text-on-surface font-body min-h-screen relative antialiased select-none pb-28">
       {/* TopAppBar */}
       <header className="fixed top-0 w-full z-40 bg-surface/80 backdrop-blur-xl border-b border-outline-variant/10">
-        <div className="flex items-center justify-between px-6 h-16 w-full">
-          <button className="text-primary hover:opacity-80 transition-opacity active:scale-95 duration-200">
-            <span className="material-symbols-outlined">menu</span>
-          </button>
+        <div className="flex items-center justify-center px-6 h-16 w-full">
           <div className="flex items-center gap-2">
             <img 
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrvmj9fE8wymT5lgT3LS-1I4tErKwpKlcZZuBgCtk4uUqeqJUROyAn248BClzDQ4WiWQNsUuKA0ARQj5N1rlYYBIBTJFlbVQOgKk7ssUajQdcgft3WfNInH_cstvFo8Z1t736NVFdm33kSYq3d8aCaFb2HpGR8Y4DSf5Xfjcxjom-cP04c0gupbVoRMpRPIwQGKcVlElt1TdH9ZrHLHnB0hWT7XO4qntCiX9borKuvuxlTIfWS03Qee_G58IWo0ZPhlTmh7FsypTg" 
@@ -155,12 +152,6 @@ const MatchReveal: React.FC = () => {
               Versa
             </h1>
           </div>
-          <button 
-            onClick={() => navigate('/compass')}
-            className="w-8 h-8 rounded-full overflow-hidden border border-outline-variant/20 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors"
-          >
-            <span className="material-symbols-outlined">spa</span>
-          </button>
         </div>
       </header>
 
@@ -244,10 +235,10 @@ const MatchReveal: React.FC = () => {
       </main>
 
       {/* Floating Bottom Date trigger button */}
-      <div className="fixed bottom-0 left-0 w-full p-6 z-30 bg-gradient-to-t from-surface via-surface/90 to-transparent flex justify-center">
+      <div className="fixed bottom-[76px] left-0 right-0 max-w-lg mx-auto p-4 z-30 bg-gradient-to-t from-[#0e0e0e] via-[#0e0e0e]/95 to-transparent flex justify-center">
         <button 
           onClick={() => setShowVibeCheck(true)}
-          className="w-full max-w-md bg-gradient-to-r from-primary to-primary-container text-on-primary-fixed font-bold font-headline py-5 rounded-3xl text-lg tracking-tight flex items-center justify-center gap-3 shadow-[0_15px_30px_rgba(241,131,255,0.3)] hover:opacity-90 active:scale-[0.98] transition-all"
+          className="w-full bg-gradient-to-r from-primary to-primary-container text-on-primary-fixed font-bold font-headline py-4 rounded-3xl text-base tracking-tight flex items-center justify-center gap-3 shadow-[0_15px_30px_rgba(241,131,255,0.3)] hover:opacity-90 active:scale-[0.98] transition-all"
         >
           Check In Vibe & Start Date
           <span className="material-symbols-outlined">arrow_forward</span>
@@ -256,12 +247,12 @@ const MatchReveal: React.FC = () => {
 
       {/* Vibe Check sliding Drawer Overlay */}
       {showVibeCheck && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex justify-center items-end">
+        <div className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex justify-center items-end">
           <div className="bg-surface border-t border-outline-variant/20 rounded-t-[2.5rem] w-full max-w-lg p-6 space-y-8 animate-slide-up shadow-2xl relative">
             
             {/* Generating pacer animation spinner overlay */}
             {generating && (
-              <div className="absolute inset-0 bg-surface/90 rounded-t-[2.5rem] z-55 flex flex-col items-center justify-center space-y-6 px-8 text-center">
+              <div className="absolute inset-0 bg-surface/90 rounded-t-[2.5rem] z-[70] flex flex-col items-center justify-center space-y-6 px-8 text-center">
                 <div className="relative w-40 h-40 flex items-center justify-center">
                   <div className="absolute w-32 h-32 rounded-full border border-primary/20 animate-ping"></div>
                   <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center">
